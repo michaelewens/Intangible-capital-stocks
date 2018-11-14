@@ -4,6 +4,8 @@ This repository contains (or will contain) the parameter estimates for intangibl
 
 ## Primer on capitalizing intangibles: the perpetual inventory model
 
+Small section on the "model" so that the parameters below make sense.
+
 ## Parameter estimates
 
 [The depreciation and investment parameters](https://github.com/michaelewens/intangible_capital/blob/master/capital_accum_parameters.csv) (in csv form) can be merged onto any dataset of firm-time R&D and SG&A flows using SIC codes.  The variables are
