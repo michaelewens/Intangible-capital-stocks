@@ -19,7 +19,7 @@ We will soon provide code that allows you to take raw Compustat data and build t
 
 ## Stocks for Compustat firms
 
-The [csv file] (https://github.com/michaelewens/intangible_capital/blob/master/intangible_stocks.csv) contains firm-year stocks of both knowledge -- `G` -- and organizaton -- `S` -- capital implied by the parameter estimates.  The columns are
+The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangible_stocks.csv) contains firm-year stocks of both knowledge -- `G` -- and organizaton -- `S` -- capital implied by the parameter estimates.  The columns are
 
 * `gvkey`: the Compustat unique identifier
 * `S`: organization capital (net) using SG&A 
