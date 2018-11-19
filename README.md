@@ -48,3 +48,14 @@ Coming soon.
   
   
   ### Python
+ 
+ ## Citation
+ 
+ `@article{ewensPetersWang2018,
+  title={Acquisition prices and the measurement of intangible capital},
+  author={Ewens, Michael and Peters, Ryan and Wang, Sean},
+  journal={Working Paper}
+  year={2018}
+  }`
+  
+Ewens, Michael, Ryan Peters and Sean Wang. "Acquisition prices and the measurement of intangible capital." Working paper, 2018.
