@@ -29,7 +29,7 @@ We will soon provide code that allows you to take raw Compustat data and build t
 
 ## Stocks for Compustat firms
 
-The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangible_stocks.csv) or [Stata .dta file](LINK) contains firm-year stocks of knowledge -- `knowCapital` -- and organizaton -- `orgCapital` -- capital implied by the parameter estimates.  The columns are:
+The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangible_stocks.csv) or [Stata .dta file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_111818.dta) contains firm-year stocks of knowledge -- `knowCapital` -- and organizaton -- `orgCapital` -- capital implied by the parameter estimates.  The columns are:
 
 * `gvkey`: the Compustat unique identifier
 * `fyear`: the fiscal year
