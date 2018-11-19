@@ -29,11 +29,12 @@ We will soon provide code that allows you to take raw Compustat data and build t
 
 ## Stocks for Compustat firms
 
-The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangible_stocks.csv) contains firm-year stocks of both knowledge -- `G` -- and organizaton -- `S` -- capital implied by the parameter estimates.  The columns are
+The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangible_stocks.csv) contains firm-year stocks of both knowledge -- `knowCapital` -- and organizaton -- `orgCapital` -- capital implied by the parameter estimates.  The columns are:
 
 * `gvkey`: the Compustat unique identifier
-* `S`: organization capital (net) using SG&A 
-* `G`: knowledge capital (net) using R&D
+* `fyear`: the fiscal year
+* `orgCapital`: organization capital (net) using SG&A 
+* `knowCapital`: knowledge capital (net) using R&D
 
 We use the industry-level parameter estimates from Ewens, Peters and Wang (2018) combined with the past 10 years of SG&A and R&D from the firm's income statement.  All dollars are nominal.  Importantly, these stocks are _net_ assets, not gross.  So any year-on-year change represents a net, rather than gross investment.  
 
