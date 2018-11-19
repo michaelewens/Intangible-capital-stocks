@@ -4,7 +4,13 @@ This repository contains (or will contain) the parameter estimates for intangibl
 
 ## Primer on capitalizing intangibles: the perpetual inventory model
 
-Small section on the "model" so that the parameters below make sense.
+See Sections 2 and 4 of Ewens, Peters and Wang (2018).   Parameters of interest:
+
+* ![equation](https://latex.codecogs.com/gif.latex?%5Cdelta_%7BG%7D): the depreciation rate of knowledge capital investmentment (i.e. R&D)
+* ![equation](https://latex.codecogs.com/gif.latex?%5Cdelta_%7BS%7D):  the depreciation rate of organization capital investmentment (i.e. SG&A)
+* ![equation](https://latex.codecogs.com/gif.latex?%5Cgamma): the percent of SG&A spending that is treated as investment in organizational capital. 
+
+Each of these parameters are estimated for the [five Fama-French industries](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/Data_Library/det_5_ind_port.html).
 
 ## Parameter estimates
 
