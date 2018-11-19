@@ -29,6 +29,8 @@ We use the industry-level parameter estimates from Ewens, Peters and Wang (2018)
 
 ## Code to construct stocks
 
+Coming soon.
+
   ### Stata
   
   ### R
