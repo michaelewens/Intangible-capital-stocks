@@ -21,6 +21,10 @@ Each of these parameters are estimated for the [five Fama-French industries](htt
 * `gamma`: the estimate for the percentage of SG&A spending that is considered investment in organizational capital
 * `industry5`: an integer in {1:5} that indicates what major Fama-French industry the SIC belongs to.  Note that Ewens, Peter and Wang (2018) put `sic >= 8000 & sic <= 8099` in `industry5 == 1`. 
 
+Here are the estimates (Nov. 2018) along with their bootstrapped standard errors:
+
+![Parameter estimates from Ewens, Peters and Wang (2018)](https://github.com/michaelewens/intangible_capital/blob/master/parameter_estimates_table.png)
+
 We will soon provide code that allows you to take raw Compustat data and build the intangible capital stocks.  
 
 ## Stocks for Compustat firms
