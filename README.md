@@ -1,6 +1,6 @@
 # Intangible capital: depreciation rates and stocks
 
-This repository contains (or will contain) the parameter estimates for intangible capital accumulation from Ewens, Peters and Wang (2018) work "Acquisition prices and the measurement of intangible capital."  
+This repository contains the parameter estimates for intangible capital accumulation and implied knowledge and organization capital stocks from Ewens, Peters and Wang (2018) work "Acquisition prices and the measurement of intangible capital."  
 
 ## Primer on capitalizing intangibles: the perpetual inventory model
 
