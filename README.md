@@ -4,7 +4,7 @@ This repository contains the parameter estimates for intangible capital accumula
 
 ## Primer on capitalizing intangibles: the perpetual inventory model
 
-See Sections 2 and 4 of Ewens, Peters and Wang (2018).   Parameters of interest:
+See Sections 2 and 4 of [Ewens, Peters and Wang (2018)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437).   Parameters of interest:
 
 * ![equation](https://latex.codecogs.com/gif.latex?%5Cdelta_%7BG%7D): the depreciation rate of knowledge capital investmentment (i.e. R&D)
 * ![equation](https://latex.codecogs.com/gif.latex?%5Cdelta_%7BS%7D):  the depreciation rate of organization capital investmentment (i.e. SG&A)
