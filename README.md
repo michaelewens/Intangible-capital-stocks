@@ -36,7 +36,7 @@ The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/in
 * `orgCapital`: organization capital (net) using SG&A 
 * `knowCapital`: knowledge capital (net) using R&D
 
-We use the industry-level parameter estimates from Ewens, Peters and Wang (2018) combined with the past 10 years of SG&A and R&D from the firm's income statement.  All dollars are nominal.  Importantly, these stocks are _net_ assets, not gross.  So any year-on-year change represents a net, rather than gross investment.  
+We use the industry-level parameter estimates from [Ewens, Peters and Wang (2018)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437) combined with the past 10 years of SG&A and R&D from the firm's income statement in Compustat.  All dollars are nominal.  Importantly, these stocks are _net_ assets, not gross.  So any year-on-year change represents a net, rather than gross investment.
 
 ## Code to construct stocks
 
