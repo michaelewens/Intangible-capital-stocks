@@ -29,7 +29,7 @@ We will soon provide code that allows you to take raw Compustat data and build t
 
 ## Stocks for Compustat firms
 
-The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangible_stocks.csv) or [Stata .dta file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_111818.dta) contains firm-year stocks of knowledge -- `knowCapital` -- and organizaton -- `orgCapital` -- capital implied by the parameter estimates.  The columns are:
+The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_112618.csv) or [Stata .dta file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_112618.dta) contains firm-year stocks of knowledge -- `knowCapital` -- and organizaton -- `orgCapital` -- capital implied by the parameter estimates.  The columns are:
 
 * `gvkey`: the Compustat unique identifier
 * `fyear`: the fiscal year
@@ -38,7 +38,7 @@ The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/in
 
 To load in Stata so you have the most up-to-date file:
 
-`insheet using "https://github.com/michaelewens/intangible_capital/blob/master/intangible_stocks.csv?raw=true", comma clear`
+`insheet using "https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_112618.csv?raw=true", comma clear`
 
 We use the industry-level parameter estimates from [Ewens, Peters and Wang (2018)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437) combined with the past 10 years of SG&A and R&D from the firm's income statement in Compustat.  All dollars are nominal.  Importantly, these stocks are _net_ assets, not gross.  So any year-on-year change represents a net, rather than gross investment.
 
