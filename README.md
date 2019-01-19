@@ -6,8 +6,8 @@ This repository contains the parameter estimates for intangible capital accumula
 
 See Sections 2 and 4 of [Ewens, Peters and Wang (2018)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437).   Parameters of interest:
 
-* ![equation](https://latex.codecogs.com/gif.latex?%5Cdelta_%7BG%7D): the depreciation rate of knowledge capital investmentment (i.e. R&D)
-* ![equation](https://latex.codecogs.com/gif.latex?%5Cdelta_%7BS%7D):  the depreciation rate of organization capital investmentment (i.e. SG&A)
+* ![equation](https://latex.codecogs.com/gif.latex?%5Cdelta_%7BG%7D): the depreciation rate of knowledge capital investment (i.e. R&D)
+* ![equation](https://latex.codecogs.com/gif.latex?%5Cdelta_%7BS%7D):  the depreciation rate of organization capital investment (i.e. SG&A)
 * ![equation](https://latex.codecogs.com/gif.latex?%5Cgamma): the percent of SG&A spending that is treated as investment in organizational capital. 
 
 Each of these parameters are estimated for the [five Fama-French industries](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/Data_Library/det_5_ind_port.html).
@@ -19,7 +19,7 @@ Each of these parameters are estimated for the [five Fama-French industries](htt
 * `knowDepr`: the estimate for the knowledge capital depreciation
 * `organDepr`: the estimate for the organizational capital depreciation
 * `gamma`: the estimate for the percentage of SG&A spending that is considered investment in organizational capital
-* `industry5`: an integer in {1:5} that indicates what major Fama-French industry the SIC belongs to.  Note that Ewens, Peter and Wang (2018) put `sic >= 8000 & sic <= 8099` in `industry5 == 1`. 
+* `industry5`: an integer in {1:5} that indicates what major Fama-French industry the SIC belongs to.  Note that Ewens, Peters and Wang (2018) put `sic >= 8000 & sic <= 8099` in `industry5 == 1`. 
 
 Here are the estimates (Jan. 2019) along with their bootstrapped standard errors:
 
@@ -29,7 +29,7 @@ We will soon provide code that allows you to take raw Compustat data and build t
 
 ## Stocks for Compustat firms
 
-The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_011919.csv) or [Stata .dta file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_011919.dta) contains firm-year stocks of knowledge -- `knowCapital` -- and organizaton -- `orgCapital` -- capital implied by the parameter estimates.  The columns are:
+The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_011919.csv) or [Stata .dta file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_011919.dta) contains firm-year stocks of knowledge -- `knowCapital` -- and organization -- `orgCapital` -- capital implied by the parameter estimates.  The columns are:
 
 * `gvkey`: the Compustat unique identifier
 * `fyear`: the fiscal year
