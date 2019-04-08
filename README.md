@@ -2,6 +2,8 @@
 
 This repository contains the parameter estimates for intangible capital accumulation and estimated knowledge and organization capital stocks from Ewens, Peters and Wang (2018) work "[Acquisition prices and the measurement of intangible capital](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437)."  
 
+In April 2019, we updated our methodology for adjusting goodwill and fixed a bug in our estimation code.  The parameter estimates have changed, so we encourage researchers to use these updated numbers.  
+
 ## Primer on capitalizing intangibles: the perpetual inventory model
 
 See Sections 2 and 4 of [Ewens, Peters and Wang (2018)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437).   Parameters of interest:
@@ -21,7 +23,7 @@ Each of these parameters are estimated for the [five Fama-French industries](htt
 * `gamma`: the estimate for the percentage of SG&A spending that is considered investment in organizational capital
 * `industry5`: an integer in {1:5} that indicates what major Fama-French industry the SIC belongs to.  Note that Ewens, Peters and Wang (2018) put `sic >= 8000 & sic <= 8099` in `industry5 == 1`. 
 
-Here are the estimates (Jan. 2019) along with their bootstrapped standard errors:
+Here are the estimates (April 2019) along with their bootstrapped standard errors:
 
 ![Parameter estimates from Ewens, Peters and Wang (2018)](https://github.com/michaelewens/intangible_capital/blob/master/parameter_estimate_table.png)
 
@@ -29,7 +31,7 @@ We will soon provide code that allows you to take raw Compustat data and build t
 
 ## Stocks for Compustat firms
 
-The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_011919.csv) or [Stata .dta file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_011919.dta) contains firm-year stocks of knowledge -- `knowCapital` -- and organization -- `orgCapital` -- capital implied by the parameter estimates.  The columns are:
+The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_0407.csv) or [Stata .dta file](https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_040719.dta) contains firm-year stocks of knowledge -- `knowCapital` -- and organization -- `orgCapital` -- capital implied by the parameter estimates.  The columns are:
 
 * `gvkey`: the Compustat unique identifier
 * `fyear`: the fiscal year
@@ -38,11 +40,11 @@ The [csv file](https://github.com/michaelewens/intangible_capital/blob/master/in
 
 To load in Stata so you have the most up-to-date file:
 
-`insheet using "https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_011919.csv?raw=true", comma clear`
+`insheet using "https://github.com/michaelewens/intangible_capital/blob/master/intangibleCapital_040719.csv?raw=true", comma clear`
 
 or
 
-`use "https://github.com/michaelewens/intangible_capital/raw/master/intangibleCapital_011919.dta", clear`
+`use "https://github.com/michaelewens/intangible_capital/raw/master/intangibleCapital_040719.dta", clear`
 
 We use the industry-level parameter estimates from [Ewens, Peters and Wang (2018)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437) combined with the past 10 years of SG&A and R&D from the firm's income statement in Compustat.  All dollars are nominal.  Importantly, these stocks are _net_ assets, not gross.  So any year-on-year change represents a net, rather than gross investment.
 
