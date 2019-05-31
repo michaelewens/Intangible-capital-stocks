@@ -23,7 +23,7 @@ Each of these parameters are estimated for the [five Fama-French industries](htt
 * `gamma`: the estimate for the percentage of SG&A spending that is considered investment in organizational capital
 * `industry5`: an integer in {1:5} that indicates what major Fama-French industry the SIC belongs to.  Note that Ewens, Peters and Wang (2018) put `sic >= 8000 & sic <= 8099` in `industry5 == 1`.  We also move some "high-tech" TV/radio providers into consumer ([see this file for classification scheme](https://github.com/michaelewens/intangible_capital/blob/master/industry5.do)) 
 
-Here are the estimates (April 2019) along with their bootstrapped standard errors:
+Here are the estimates (May 2019) along with their bootstrapped standard errors:
 
 ![Parameter estimates from Ewens, Peters and Wang (2018)](https://github.com/michaelewens/intangible_capital/blob/master/parameter_est_table.png)
 
