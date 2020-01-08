@@ -25,7 +25,7 @@ Each of these parameters are estimated for the [five Fama-French industries](htt
 
 Here are the estimates (Dec. 2019) along with their bootstrapped standard errors:
 
-![Parameter estimates from Ewens, Peters and Wang (2020)](https://github.com/michaelewens/intangible_capital/blob/master/parameter_est_table.png)
+![Parameter estimates from Ewens, Peters and Wang (2020)](https://github.com/michaelewens/intangible_capital/blob/master/parameter_est2020.png)
 
 We will soon provide code that allows you to take raw Compustat data and build the intangible capital stocks.  
 
