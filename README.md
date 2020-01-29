@@ -1,12 +1,12 @@
 # Intangible capital: depreciation rates and stocks
 
-This repository contains the parameter estimates for intangible capital accumulation and estimated knowledge and organization capital stocks from Ewens, Peters and Wang (2020) work "[Measuring Intangible Capital with Market Prices](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437)."  
+This repository contains the parameter estimates for intangible capital accumulation and estimated knowledge and organization capital stocks from Ewens, Peters and Wang (2020) work "[Measuring Intangible Capital with Market Prices](https://osf.io/preprints/socarxiv/kvp2f/)."  
 
 In April 2019, we updated our methodology for adjusting goodwill and fixed a bug in our estimation code.  The parameter estimates have changed, so we encourage researchers to use these updated numbers.  
 
 ## Primer on capitalizing intangibles: the perpetual inventory model
 
-See Sections 2 and 4 of [Ewens, Peters and Wang (2020)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437).   Parameters of interest:
+See Sections 2 and 4 of [Ewens, Peters and Wang (2020)](https://osf.io/preprints/socarxiv/kvp2f/).   Parameters of interest:
 
 * ![equation](https://latex.codecogs.com/gif.latex?%5Cdelta_%7BG%7D): the depreciation rate of knowledge capital investment (i.e. R&D)
 * ![equation](https://latex.codecogs.com/gif.latex?%5Cdelta_%7BS%7D):  the depreciation rate of organization capital investment (i.e. SG&A)
@@ -46,7 +46,7 @@ or
 
 `use "https://github.com/michaelewens/intangible_capital/raw/master/intangibleCapital_122919.dta", clear`
 
-We use the industry-level parameter estimates from [Ewens, Peters and Wang (2020)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437) combined with the past 10 years of SG&A and R&D from the firm's income statement in Compustat.  All dollars are nominal.  Importantly, these stocks are _net_ assets, not gross.  So any year-on-year change represents a net, rather than gross investment.
+We use the industry-level parameter estimates from [Ewens, Peters and Wang (2020)](https://osf.io/preprints/socarxiv/kvp2f/) combined with the past 10 years of SG&A and R&D from the firm's income statement in Compustat.  All dollars are nominal.  Importantly, these stocks are _net_ assets, not gross.  So any year-on-year change represents a net, rather than gross investment.
 
 ## Code to construct stocks
 
@@ -64,9 +64,9 @@ Coming soon.
  @article{ewensPetersWang2020,
   title={Measuring Intangible Capital with Market Prices},
   author={Ewens, Michael and Peters, Ryan and Wang, Sean},
-  journal={Working Paper}
+  journal={Working Paper},
   year={2020}
   }
  ```
   
-Ewens, Michael, Ryan Peters and Sean Wang. "[Measuring Intangible Capital with Market Prices](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3287437)." Working paper, 2020.
+Ewens, Michael, Ryan Peters and Sean Wang. "[Measuring Intangible Capital with Market Prices](https://osf.io/preprints/socarxiv/kvp2f/)." Working paper, 2020.
