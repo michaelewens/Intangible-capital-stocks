@@ -224,7 +224,8 @@ fy=funda[funda.ageipo>0].groupby('gvkey',as_index=False).ipodate.apply(lambda x:
 cusip=funda[funda.ageipo>0].groupby('gvkey').cusip.unique().apply(lambda x: np.unique(x)[0])
 a=pd.DataFrame({'gvkey':gv,'fyear':fy.ipodate,'cusip':cusip.values})
 funda=funda.append(a)
-funda=funda.sort_values(by=['gvkey','fyear']).drop_duplicates(subset=['fyear','gvkey'],keep='last')
+funda=funda.sort_values(by=['gvkey','fyear','datadate','seq'], na_position='first').drop_duplicates(subset=['fyear','gvkey'],keep='last')
+##original code does not contain na_position, to see why it matters, see gvkey==12849
 funda.index=pd.to_datetime(funda.fyear, format='%Y')
 funda=funda.groupby('gvkey',as_index=False).resample("Y").ffill() 
 funda['fyear']=funda.index.get_level_values('fyear')  
@@ -294,6 +295,7 @@ fy=funda.groupby('gvkey',as_index=False)['Founding'].first()
 cusip=funda.groupby('gvkey').cusip.unique().apply(lambda x: np.unique(x)[0])
 a=pd.DataFrame({'gvkey':gv,'fyear':fy.Founding,'cusip':cusip.values})
 funda=funda.append(a)
+
 funda=funda.sort_values(by=['gvkey','fyear','count'],ascending=True,na_position='first').drop_duplicates(subset=['fyear','gvkey'],keep='last')
 funda.index=pd.to_datetime(funda.fyear, format='%Y')
 funda=funda.groupby('gvkey',as_index=False).resample("Y").ffill()    
