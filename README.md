@@ -50,7 +50,7 @@ We use the industry-level parameter estimates from [Ewens, Peters and Wang (2020
 
 ## Code to construct stocks
 
-Dijun Lui [wrote a Python script](https://github.com/michaelewens/Intangible-capital-stocks/blob/master/intangibes_cleaned.py) that generates stocks with correlations > .99 with the EPW stocks.
+Dijun Liu [wrote a Python script](https://github.com/michaelewens/Intangible-capital-stocks/blob/master/intangibes_cleaned.py) that generates stocks with correlations > .99 with the EPW stocks.
 
   ### Stata
   
