@@ -40,7 +40,7 @@ Current release: [`intangibleCapital_20260924.csv`](intangibleCapital_20260924.c
 * `fyear`: the fiscal year
 * `orgCapital`: organization capital (net) using SG&A
 * `knowCapital`: knowledge capital (net) using R&D
-* `note`: blank when the stocks are computed from reported data. Otherwise one of: `assets missing; no stock computed` (Compustat has the firm-year but no reported assets, so the flows cannot be filled and the stock is left missing); `assets missing; R&D and SG&A interpolated` (flows interpolated from adjacent years); `stock missing because an earlier year had no flows`.
+* `note`: blank when the stocks are computed from reported data. Otherwise one of: `total assets not reported; R&D and SG&A reported` (Compustat has no total assets for the firm-year but the flows are reported and used as they are); `total assets not reported; R&D and SG&A interpolated from adjacent years`; `total assets not reported; R&D and SG&A missing; no stock computed` (missing flows are set to zero only when total assets are reported, so nothing can be filled here); `no stock: an earlier year had missing R&D or SG&A` (a gap earlier in the firm's history leaves every later stock missing).
 
 All dollars are nominal, in Compustat units (millions). The stocks are _net_ assets, not gross, so a year-on-year change is net investment. Every Compustat firm-year is kept; a missing stock is explained in `note` rather than dropped.
 

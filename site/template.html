@@ -38,7 +38,7 @@
       <tr><td><code>fyear</code></td><td>Fiscal year</td></tr>
       <tr><td><code>knowCapital</code></td><td>Knowledge capital, net, nominal $ millions. Capitalized R&amp;D.</td></tr>
       <tr><td><code>orgCapital</code></td><td>Organization capital, net, nominal $ millions. Capitalized share of SG&amp;A.</td></tr>
-      <tr><td><code>note</code></td><td>Blank when computed from reported data. Otherwise: <em>assets missing; no stock computed</em>, <em>assets missing; R&amp;D and SG&amp;A interpolated</em>, or <em>stock missing because an earlier year had no flows</em>.</td></tr>
+      <tr><td><code>note</code></td><td>Blank when computed from reported data. Otherwise: <em>total assets not reported; R&amp;D and SG&amp;A reported</em>; <em>total assets not reported; R&amp;D and SG&amp;A interpolated from adjacent years</em>; <em>total assets not reported; R&amp;D and SG&amp;A missing; no stock computed</em>; or <em>no stock: an earlier year had missing R&amp;D or SG&amp;A</em>.</td></tr>
     </table>
     <pre>Stata:   import delimited "{{csv_url}}", clear
 Python:  pd.read_csv("{{csv_url}}")

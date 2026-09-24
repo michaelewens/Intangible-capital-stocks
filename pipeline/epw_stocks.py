@@ -234,10 +234,12 @@ def build(asof_year: int, verbose=True, inputs: Path = IN, link_expanded: bool =
     at_missing = df["at"].isna()
     stock_missing = df.G2.isna() | df.S2.isna()
     prev_present = df.groupby("gvkey").G2.shift(1).notna()
+    reported = df.report_rd | df.report_sga
     df["note"] = ""
-    df.loc[at_missing & ~stock_missing, "note"] = "assets missing; R&D and SG&A interpolated"
-    df.loc[stock_missing & at_missing, "note"] = "assets missing; no stock computed"
-    df.loc[stock_missing & ~at_missing, "note"] = "stock missing because an earlier year had no flows"
+    df.loc[at_missing & ~stock_missing & reported, "note"] = "total assets not reported; R&D and SG&A reported"
+    df.loc[at_missing & ~stock_missing & ~reported, "note"] = "total assets not reported; R&D and SG&A interpolated from adjacent years"
+    df.loc[at_missing & stock_missing & ~reported, "note"] = "total assets not reported; R&D and SG&A missing; no stock computed"
+    df.loc[stock_missing & (~at_missing | reported), "note"] = "no stock: an earlier year had missing R&D or SG&A"
     out = df[df.fyear >= 1975][["gvkey", "fyear", "S2", "G2", "cpidef", "datadate", "note"]].copy()
     out["orgCapital"] = out.S2 * out.cpidef
     out["knowCapital"] = out.G2 * out.cpidef

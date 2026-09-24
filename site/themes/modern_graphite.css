@@ -1,0 +1,42 @@
+  :root { --ink: #1f1f1f; --muted: #5f5f5f; --line: #e4e2dd; --accent: #c2410c; --bg: #fcfbf9; --panel: #f4f2ee; --band: #2b2b2b;
+          --sans: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+          --display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 66px; }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); background: var(--bg); line-height: 1.6; font-size: 17px; }
+  nav { position: sticky; top: 0; z-index: 10; background: var(--band); }
+  nav .inner { max-width: 1000px; margin: 0 auto; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 4px 26px; align-items: center; }
+  nav .brand { font-family: var(--display); font-weight: 600; font-size: 1.1rem; margin-right: auto; color: #fff; text-decoration: none; }
+  nav a { color: #d6d3cd; text-decoration: none; font-size: 0.92rem; }
+  nav a:hover { color: #fff; }
+  main { max-width: 1000px; margin: 0 auto; padding: 0 24px 96px; }
+  h1 { font-family: var(--display); font-weight: 600; font-size: 3rem; letter-spacing: -0.01em; margin: 56px 0 10px; line-height: 1.08; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 1.7rem; margin: 72px 0 18px; letter-spacing: -0.005em; }
+  h3 { font-weight: 650; font-size: 1.08rem; margin: 26px 0 8px; }
+  h4 { font-weight: 650; font-size: 1rem; margin: 18px 0 6px; }
+  p { margin: 0 0 16px; }
+  a { color: var(--accent); }
+  .sub { font-size: 1.22rem; color: var(--muted); margin: 0 0 36px; line-height: 1.5; max-width: 760px; }
+  .panel { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 30px 32px; margin: 30px 0; box-shadow: 0 10px 30px rgba(43,43,43,0.06); }
+  .panel h2 { margin-top: 0; }
+  .download { border-top: 5px solid var(--accent); }
+  .btn { display: inline-block; background: var(--accent); color: #fff; padding: 13px 22px; border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 0.98rem; border: 1px solid var(--accent); cursor: pointer; font-family: var(--sans); }
+  .btn.secondary { background: #fff; color: var(--accent); }
+  .btn:hover { filter: brightness(1.06); }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 22px; }
+  pre { background: var(--band); color: #ece9e3; border: 0; border-radius: 10px; padding: 16px 18px; overflow: auto; font-size: 0.84rem; line-height: 1.55; max-height: 300px; }
+  pre#prompt { white-space: pre-wrap; word-break: break-word; }
+  table { border-collapse: collapse; margin: 8px 0 20px; width: 100%; }
+  td, th { border-top: 1px solid var(--line); padding: 10px 10px 10px 0; text-align: left; font-size: 0.95rem; vertical-align: top; }
+  th { font-weight: 600; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; border-top: 0; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--panel); padding: 2px 5px; border-radius: 4px; font-size: 0.88em; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 34px 30px; }
+  @media (min-width: 760px) { .grid { grid-template-columns: 1fr 1fr; } .grid figure.wide { grid-column: 1 / -1; } }
+  figure { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 22px 22px 16px; }
+  figure h3 { margin-top: 0; }
+  figure img { width: 100%; height: auto; background: #fff; }
+  figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 10px; line-height: 1.5; }
+  .placeholder { border: 1px dashed var(--line); padding: 60px 16px; text-align: center; color: var(--muted); }
+  .readme img { max-width: 100%; }
+  .readme h2 { font-size: 1.3rem; margin-top: 36px; }
+  footer { color: var(--muted); font-size: 0.88rem; margin-top: 72px; border-top: 1px solid var(--line); padding-top: 18px; }

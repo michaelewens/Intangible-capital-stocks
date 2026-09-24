@@ -49,7 +49,7 @@ Columns:
   fyear        fiscal year
   knowCapital  knowledge capital stock, net, nominal $ millions (capitalized R&D)
   orgCapital   organization capital stock, net, nominal $ millions (capitalized share of SG&A)
-  note         blank when computed from reported data; otherwise explains a missing or interpolated stock
+  note         blank when computed from reported data; otherwise says that Compustat total assets were not reported (flows reported, interpolated, or missing) or that an earlier year's missing flows leave the stock missing
 Stocks are net (after depreciation), so year-on-year changes are net investment. Merge to Compustat on (gvkey, fyear).
 
 PARAMETERS: {f['params_url']} gives, by 4-digit SIC, the knowledge depreciation rate (knowDepr), organization depreciation rate (organDepr, 0.20), the share of SG&A treated as investment (gamma), and the Fama-French 5 industry. Baseline by industry (knowDepr / gamma): Consumer 0.43 / 0.20, Manufacturing 0.50 / 0.21, High-tech 0.42 / 0.37, Health 0.33 / 0.51, Other 0.35 / 0.22.
@@ -115,7 +115,7 @@ def figures_html():
     return "\n".join(out)
 
 
-def main(theme="academic", out_name="index.html"):
+def main(theme="modern_indigo", out_name="index.html"):
     f = release_facts()
     DIST.mkdir(parents=True, exist_ok=True)
     (DIST / "figures").mkdir(exist_ok=True); (DIST / "data").mkdir(exist_ok=True)
@@ -135,7 +135,7 @@ def main(theme="academic", out_name="index.html"):
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == "--all-themes":
-        for t in ["academic", "editorial", "modern"]:
-            main(t, "index.html" if t == "academic" else f"theme_{t}.html")
+        for t in ["academic", "editorial", "modern", "modern_indigo", "modern_graphite"]:
+            main(t, "index.html" if t == "modern_indigo" else f"theme_{t}.html")
     else:
         main(*sys.argv[1:])
