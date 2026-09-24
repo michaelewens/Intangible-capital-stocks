@@ -8,7 +8,8 @@
  {
   "id": "fig02",
   "title": "The stocks alongside physical capital",
-  "caption": "Aggregate knowledge capital, organization capital, and net property, plant and equipment across all firms in the sample, by fiscal year, nominal dollars."
+  "caption": "Aggregate knowledge capital, organization capital, and net property, plant and equipment across all firms in the sample, by fiscal year, nominal dollars.",
+  "wide": true
  },
  {
   "id": "fig07",
