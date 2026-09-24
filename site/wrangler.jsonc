@@ -1,5 +1,9 @@
 {
   "name": "intangiblesdata",
   "compatibility_date": "2025-01-01",
-  "assets": { "directory": "./dist" }
+  "assets": { "directory": "./dist" },
+  "routes": [
+    { "pattern": "intangiblesdata.org", "custom_domain": true },
+    { "pattern": "www.intangiblesdata.org", "custom_domain": true }
+  ]
 }
