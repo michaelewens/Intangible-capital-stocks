@@ -1,0 +1,41 @@
+  :root { --ink: #221f1a; --muted: #6b645b; --line: #d8d1c5; --accent: #7b1e1e; --bg: #faf7f1; --panel: #f3eee4;
+          --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+          --sans: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 60px; }
+  body { margin: 0; font-family: var(--serif); color: var(--ink); background: var(--bg); line-height: 1.6; font-size: 18px; }
+  nav { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 3px double var(--line); }
+  nav .inner { max-width: 880px; margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 4px 22px; align-items: baseline; }
+  nav .brand { font-weight: 700; font-size: 1.1rem; margin-right: auto; color: var(--ink); text-decoration: none; letter-spacing: 0.02em; }
+  nav a { color: var(--ink); text-decoration: none; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--sans); }
+  nav a:hover { color: var(--accent); }
+  main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1 { font-weight: 700; font-size: 3rem; letter-spacing: -0.01em; margin: 12px 0 10px; line-height: 1.1; }
+  h2 { font-weight: 700; font-size: 1.7rem; margin: 60px 0 16px; padding-top: 10px; border-top: 3px double var(--line); }
+  h3 { font-weight: 700; font-size: 1.2rem; margin: 24px 0 8px; }
+  h4 { font-weight: 700; font-size: 1.05rem; margin: 18px 0 6px; }
+  p { margin: 0 0 16px; }
+  a { color: var(--accent); }
+  .sub { font-size: 1.25rem; color: var(--muted); margin: 0 0 32px; line-height: 1.45; font-style: italic; }
+  .panel { border-top: 3px double var(--line); border-bottom: 3px double var(--line); padding: 24px 0; margin: 28px 0; background: transparent; }
+  .panel h2 { margin-top: 0; border: 0; padding: 0; }
+  .download { background: var(--panel); padding: 24px 26px; border: 0; }
+  .btn { display: inline-block; background: var(--accent); color: #fff; padding: 11px 20px; border-radius: 2px; text-decoration: none; font-weight: 600; font-size: 0.92rem; border: 1px solid var(--accent); cursor: pointer; font-family: var(--sans); text-transform: uppercase; letter-spacing: 0.06em; }
+  .btn.secondary { background: transparent; color: var(--accent); }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px; }
+  pre { background: #fffdf9; border: 1px solid var(--line); padding: 12px 14px; overflow: auto; font-size: 0.82rem; line-height: 1.45; max-height: 280px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  pre#prompt { white-space: pre-wrap; word-break: break-word; }
+  table { border-collapse: collapse; margin: 8px 0 18px; width: 100%; }
+  td, th { border-top: 1px solid var(--line); padding: 8px 10px 8px 0; text-align: left; font-size: 0.95rem; vertical-align: top; }
+  th { font-family: var(--sans); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; border-top: 0; border-bottom: 1px solid var(--ink); }
+  code { font-family: ui-monospace, Menlo, Consolas, monospace; background: var(--panel); padding: 1px 4px; font-size: 0.85em; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 40px 32px; }
+  @media (min-width: 760px) { .grid { grid-template-columns: 1fr 1fr; } .grid figure.wide { grid-column: 1 / -1; } }
+  figure { margin: 0; }
+  figure h3 { margin-top: 0; }
+  figure img { width: 100%; height: auto; background: #fff; border: 1px solid var(--line); }
+  figcaption { color: var(--muted); font-size: 0.92rem; margin-top: 8px; line-height: 1.45; }
+  .placeholder { border: 1px dashed var(--line); padding: 60px 16px; text-align: center; color: var(--muted); }
+  .readme img { max-width: 100%; }
+  .readme h2 { font-size: 1.35rem; margin-top: 36px; border: 0; padding: 0; }
+  footer { color: var(--muted); font-size: 0.9rem; margin-top: 64px; border-top: 3px double var(--line); padding-top: 16px; font-family: var(--sans); }

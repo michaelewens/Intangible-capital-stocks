@@ -115,7 +115,7 @@ def figures_html():
     return "\n".join(out)
 
 
-def main():
+def main(theme="academic", out_name="index.html"):
     f = release_facts()
     DIST.mkdir(parents=True, exist_ok=True)
     (DIST / "figures").mkdir(exist_ok=True); (DIST / "data").mkdir(exist_ok=True)
@@ -124,13 +124,18 @@ def main():
     prompt = llm_prompt(f)
     (DIST / "prompt.txt").write_text(prompt)
     (DIST / "llms.txt").write_text("# intangiblesdata.org\n\n> Firm-year knowledge and organization capital stocks for U.S. public firms (Ewens, Peters and Wang 2024), updated as fiscal years close in Compustat.\n\n" + prompt)
-    html = (SITE / "template.html").read_text()
+    html = (SITE / "template.html").read_text().replace("{{theme_css}}", (SITE / "themes" / f"{theme}.css").read_text())
     for k, v in f.items(): html = html.replace("{{" + k + "}}", str(v))
     readme = md_to_html((ROOT / "README.md").read_text(), REPO + "/blob/master/", REPO_RAW)
     html = html.replace("{{readme}}", readme).replace("{{params_rows}}", params_table()).replace("{{figures}}", figures_html()).replace("{{prompt}}", prompt.replace("<", "&lt;"))
-    (DIST / "index.html").write_text(html)
-    print("built", DIST / "index.html")
+    (DIST / out_name).write_text(html)
+    print("built", DIST / out_name, "theme", theme)
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "--all-themes":
+        for t in ["academic", "editorial", "modern"]:
+            main(t, "index.html" if t == "academic" else f"theme_{t}.html")
+    else:
+        main(*sys.argv[1:])
