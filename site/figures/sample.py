@@ -37,15 +37,13 @@ def sic_keep(s):
              s.between(1000, 1499) | (s >= 9000))
 
 
-def deal_flags(inputs):
+def deal_flags(inputs, final_deals=WORK/'author_deals.csv'):
     f = inputs / 'figures'
-    t = pd.read_stata(f/'targetData.dta', convert_categoricals=False)
-    a = pd.read_stata(f/'acqData.dta', convert_categoricals=False)
-    # Both extracts are saved from the same preserved dataset, in identical order,
-    # in createParameterEstData.do. Check the complete deal-ID sequence before pairing.
-    if len(t) != len(a) or not t.sdc_dealno.equals(a.sdc_dealno):
-        raise ValueError('Missing target completion-year map: targetData/acqData row sequences differ')
-    t['fyear'] = a.YearCompletedUnconditional.to_numpy()
+    if Path(final_deals).exists():
+        t = pd.read_csv(final_deals)
+        t['fyear'] = t.YearCompletedUnconditional
+    else:
+        raise FileNotFoundError(f'Missing exact final deal keys: {final_deals}. Run prepare_author_inputs.py; the supplied target/acquirer extracts precede final estimation selection.')
     t = t.rename(columns={'tgt_gvkey':'gvkey'}).drop_duplicates('gvkey', keep='first')
     links = pd.read_stata(f/'Philips_gvkey_link.dta', convert_categoricals=False)
     links['agvkey'] = pd.to_numeric(links.agvkey, errors='coerce')
@@ -55,7 +53,7 @@ def deal_flags(inputs):
     return t[KEY].dropna().assign(targetYear=True), acq[KEY].assign(acqYear=True)
 
 
-def market_panel(inputs, maxyear):
+def market_panel(inputs, funda_dates):
     m = pd.read_csv(inputs/'msf.csv', parse_dates=['mthcaldt'])
     m = m.sort_values(['permno','mthcaldt'])
     m['ym'] = m.mthcaldt.dt.year*12 + m.mthcaldt.dt.month
@@ -84,11 +82,13 @@ def market_panel(inputs, maxyear):
     m = m.merge(sp, on=['permno','fyear'], how='left', validate='one_to_one')
     m['sp500'] = m.sp500.fillna(0)
     lk = pd.read_csv(inputs/'ccmlink.csv', parse_dates=['linkdt','linkenddt'])
-    # Available input is link history, not the authors' datadate-expanded map.
-    lk['fyear'] = [list(range(int(a),int(b)+1)) for a,b in zip(lk.linkdt.dt.year, lk.linkenddt.dt.year.fillna(maxyear))]
-    lk = lk.explode('fyear').rename(columns={'lpermno':'permno'}).dropna(subset=['fyear'])
-    lk['fyear'] = lk.fyear.astype(int)
-    lk = lk.sort_values(['permno','fyear','linkdt','linkenddt']).drop_duplicates(['permno','fyear'],keep='last')
+    # Reconstruct the report-date-expanded link input from current link history.
+    # Stata uses year(datadate), NOT fiscal year, to attach calendar CRSP data.
+    lk = funda_dates[['gvkey','datadate']].drop_duplicates().merge(lk,on='gvkey',how='inner')
+    lk = lk[(lk.datadate>=lk.linkdt)&(lk.linkenddt.isna()|(lk.datadate<=lk.linkenddt))].copy()
+    lk = lk.rename(columns={'lpermno':'permno'})
+    lk['fyear'] = lk.datadate.dt.year
+    lk = lk.sort_values(['permno','fyear','datadate','linkdt']).drop_duplicates(['permno','fyear'],keep='last')
     m = m.merge(lk[['permno','fyear','gvkey']], on=['permno','fyear'], how='inner', validate='one_to_one')
     m = m[~m.duplicated(KEY, keep=False)].copy()
     fy = pd.read_csv(inputs/'ipo_year.csv').rename(columns={'ipo_year':'ipoyear'})
@@ -100,11 +100,11 @@ def market_panel(inputs, maxyear):
     return m[KEY+['permno','mktCap_crsp','annualRet','annualRetX','sp500','foundingyear','ipoyear','ager']]
 
 
-def prepare_market(d, inputs=INPUTS):
+def prepare_market(d, inputs=INPUTS, final_deals=WORK/'author_deals.csv'):
     """Sample portion of createFigures8_9.do; keep all years until figure collapse."""
     d = d.loc[sic_keep(d.sic)].copy().sort_values(KEY).reset_index(drop=True)
     d['industry5'] = industry5(d.sic)
-    t,a = deal_flags(inputs)
+    t,a = deal_flags(inputs,final_deals)
     d = d.merge(t,on=KEY,how='left',validate='one_to_one').merge(a,on=KEY,how='left',validate='one_to_one')
     d['at'] = d['at'].fillna(0)
     d['rdip'] = d.rdip.fillna(0)
@@ -161,7 +161,7 @@ def stock_fields(panel):
     return p[KEY+['G2','S2','G2depr','S2depr','gamma','intan2','ati2','intensity2','stock_sample']]
 
 
-def build_sample(inputs=INPUTS, panel=PANEL):
+def build_sample(inputs=INPUTS, panel=PANEL, final_deals=WORK/'author_deals.csv'):
     inputs, panel = Path(inputs),Path(panel)
     d = pd.read_csv(inputs/'funda.csv',parse_dates=['datadate'])
     d = d.sort_values(KEY+['datadate']).drop_duplicates(KEY,keep='last')
@@ -171,7 +171,7 @@ def build_sample(inputs=INPUTS, panel=PANEL):
     d['industry5'] = industry5(d.sic)
     for c in ['xrd','xsga','dp']: d[c] = d[c].clip(lower=0)
     d['dpact'] = d.dpact.fillna(0)
-    d = d.merge(market_panel(inputs,int(d.fyear.max())),on=KEY,how='left',validate='one_to_one')
+    d = d.merge(market_panel(inputs,d),on=KEY,how='left',validate='one_to_one')
     for c in ['ipoyear','foundingyear']:
         d[c] = d[c].fillna(d.groupby('gvkey')[c].transform('max'))
     d['mkvalt'] = d.mkvalt.fillna(d.mktCap_crsp)
@@ -190,7 +190,7 @@ def build_sample(inputs=INPUTS, panel=PANEL):
     for c in ['at','xrd','xsga','capx']: d['fig01_'+c] = d[c]
     stocks = stock_fields(panel)
     d = d.merge(stocks,on=KEY,how='left',validate='one_to_one')
-    market = prepare_market(d,inputs)
+    market = prepare_market(d,inputs,final_deals)
     market['market_sample'] = True
     cols = KEY+['market_sample','mb_win','targetYear','acqYear','dontPick','tangibleMB_win']
     real = 'mkvalt lt at ppent intan act xrd xsga dcpstk ao ppegt sale cogs capx ni oancf ceq cpidef'.split()
@@ -199,7 +199,7 @@ def build_sample(inputs=INPUTS, panel=PANEL):
     d = d.merge(market,on=KEY,how='left',validate='one_to_one')
     for c in ['market_sample','stock_sample']: d[c] = d[c].eq(True)
     # Preserve deal flags on excluded rows too.
-    t,a = deal_flags(inputs)
+    t,a = deal_flags(inputs,final_deals)
     d = d.drop(columns=['targetYear','acqYear']).merge(t,on=KEY,how='left').merge(a,on=KEY,how='left')
     for c in ['targetYear','acqYear']: d[c] = d[c].eq(True)
     return d.sort_values(KEY).reset_index(drop=True)
@@ -216,9 +216,10 @@ def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--inputs',type=Path,default=INPUTS)
     ap.add_argument('--panel',type=Path,default=PANEL)
+    ap.add_argument('--final-deals',type=Path,default=WORK/'author_deals.csv')
     ap.add_argument('--out',type=Path,default=WORK/'sample.csv')
     a=ap.parse_args()
-    d=build_sample(a.inputs,a.panel)
+    d=build_sample(a.inputs,a.panel,a.final_deals)
     a.out.parent.mkdir(parents=True,exist_ok=True)
     d.to_csv(a.out,index=False)
     summary={'rows':len(d),'first_year':int(d.fyear.min()),'latest_year':int(d.fyear.max()),'market_rows':int(d.market_sample.sum()),'stock_rows':int(d.stock_sample.sum()),'target_rows':int(d.targetYear.sum()),'acquirer_rows':int(d.acqYear.sum()),'sp500_last_year':int(d.loc[d.sp500.eq(1),'fyear'].max())}

@@ -1,9 +1,39 @@
 [
-  {"id": "fig01", "title": "Investment moved from physical to intangible", "caption": "Mean R&D over assets and capital expenditures over assets across Compustat firms, by fiscal year, 1977 to the latest year. Paper Figure 1, extended."},
-  {"id": "fig02", "title": "The stocks alongside physical capital", "caption": "Aggregate knowledge capital, organization capital, and gross property, plant and equipment across all firms in the sample, by fiscal year, nominal dollars."},
-  {"id": "fig07", "title": "Intangible intensity by industry", "caption": "Mean share of intangible assets (knowledge plus organization capital plus balance-sheet intangibles) in the total capital stock, by Fama-French industry and fiscal year. Paper Figure 7, extended."},
-  {"id": "fig04", "title": "The cross-section in the latest fiscal year", "caption": "Distribution of intangible intensity across firms in the latest fiscal year, by industry."},
-  {"id": "fig03", "title": "Explanatory power for market value", "caption": "Gain in R-squared from adding the intangible stocks to book capital in annual regressions of log enterprise value on log book capital. Paper Figure 3, without the BEA benchmark."},
-  {"id": "fig08", "title": "Market-to-book with and without intangibles", "caption": "Mean market value of assets over book assets, and over book assets plus the intangible stocks, by fiscal year, with fitted trends. Paper Figure 8, extended."},
-  {"id": "fig09", "title": "Return on equity with and without intangibles", "caption": "Mean return on equity for S&P 500 firms, unadjusted and adjusted for capitalized intangibles in both income and equity, by fiscal year. Paper Figure 9, extended."}
+ {
+  "id": "fig01",
+  "title": "Investment moved from physical to intangible",
+  "caption": "Mean R&D over assets and capital expenditures over assets across Compustat firms, by fiscal year, 1977 to the latest year. Paper Figure 1, extended.",
+  "wide": true
+ },
+ {
+  "id": "fig02",
+  "title": "The stocks alongside physical capital",
+  "caption": "Aggregate knowledge capital, organization capital, and gross property, plant and equipment across all firms in the sample, by fiscal year, nominal dollars."
+ },
+ {
+  "id": "fig07",
+  "title": "Intangible intensity by industry",
+  "caption": "Mean share of intangible assets (knowledge plus organization capital plus balance-sheet intangibles) in the total capital stock, by Fama-French industry and fiscal year. Paper Figure 7, extended.",
+  "wide": true
+ },
+ {
+  "id": "fig04",
+  "title": "The cross-section in the latest fiscal year",
+  "caption": "Distribution of intangible intensity across firms in the latest fiscal year, by industry."
+ },
+ {
+  "id": "fig03",
+  "title": "Explanatory power for market value",
+  "caption": "Gain in R-squared from adding the intangible stocks to book capital in annual regressions of log enterprise value on log book capital. Paper Figure 3, without the BEA benchmark."
+ },
+ {
+  "id": "fig08",
+  "title": "Market-to-book with and without intangibles",
+  "caption": "Mean market value of assets over book assets, and over book assets plus the intangible stocks, by fiscal year, with fitted trends. Paper Figure 8, extended."
+ },
+ {
+  "id": "fig09",
+  "title": "Return on equity with and without intangibles",
+  "caption": "Mean return on equity for S&P 500 firms, unadjusted and adjusted for capitalized intangibles in both income and equity, by fiscal year. Paper Figure 9, extended."
+ }
 ]

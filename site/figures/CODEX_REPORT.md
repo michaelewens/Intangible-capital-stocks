@@ -11,21 +11,37 @@ Shared panel: 599,379 firm-years; latest fiscal year 2026. Results below were co
 | 07 | intensity2 industry=3 | 1977–2024 | 0.997847 | 0.001666 | 1/48 |
 | 07 | intensity2 industry=4 | 1977–2024 | 0.994268 | 0.002046 | 1/48 |
 | 07 | intensity2 industry=6 | 1977–2024 | 0.999937 | 0.000653 | 0/48 |
-| 08 | mb_win | 1977–2017 | 0.999800 | 0.006447 | 0/41 |
-| 08 | epw | 1977–2017 | 0.999319 | 0.011615 | 0/41 |
-| 09 | roe_inc2 | 1978–2023 | 0.921889 | 0.012348 | 12/46 |
-| 09 | roe_inc_epw2 | 1978–2023 | 0.884962 | 0.006414 | 11/46 |
-| 09 | diffUnadj | 1978–2023 | 0.896819 | 0.008928 | 28/46 |
+| 08 | mb_win | 1977–2017 | 0.998443 | 0.032053 | 6/41 |
+| 08 | epw | 1977–2017 | 0.996010 | 0.018861 | 3/41 |
+| 09 | roe_inc2 | 1978–2023 | 0.922594 | 0.012390 | 13/46 |
+| 09 | roe_inc_epw2 | 1978–2023 | 0.883872 | 0.006290 | 10/46 |
+| 09 | diffUnadj | 1978–2023 | 0.896095 | 0.009077 | 30/46 |
+
+## Matched historical input audit
+
+The same figure functions were also run on figure1data.dta plus the authors’ stored stocks, using the exact final acquisition file. This checks the translation independently of current inputs. The ROE curves visually coincide with the published PNG; differences are within the stated image-reading precision.
+
+| Figure | Series | Correlation | Mean absolute difference |
+|---|---|---:|---:|
+| 08 | mb_win | 0.999013 | 0.038252 |
+| 08 | epw | 0.998608 | 0.012592 |
+| 09 | roe_inc2 | 0.999966 | 0.000386 |
+| 09 | roe_inc_epw2 | 0.999697 | 0.000337 |
+| 09 | diffUnadj | 0.999978 | 0.000300 |
+
+The numerical Figure 8 reference ends in 2017; it does not certify later years in the PNG. Replaying the newer historical source inputs against that earlier stored intermediate is not an exact same-input comparison. On common firm-years, the raw market-to-book MAE is 0.004266 and the stored winsorized MAE is 0.033191. This discrepancy predates the current Compustat rebuild and cannot be labeled a port error or dismissed as zero.
+
+S&P membership spells actually end on 2019-12-31. Flags afterward are artifacts of the preserved Stata multi-spell expansion. Current and author membership counts by year are recorded in diagnostics.json. The current fiscal-year tail contains 33 raw observations, so it is incomplete.
 
 ## Fidelity and deviations
 
 Preserved: calendar-year lags; figure-specific samples; pooled winsorization; missing-value propagation; R&D-from-SG&A stripping; sequential growth backfill; the hard-coded market CPI override; delta raised to the year gap for depreciation; the ineffective ppent missing-value replacement; OLS trend lines. The paper end-year cap is removed as requested. Current data are not calibrated to make the old pictures match.
 
+The final deal keys were found in the authors’ local estimation file and staged under data/figures_work/author_deals.csv. Target deduplication precedes the Philips acquirer merge. The supplied extracts were also checked against the exact final deal sequence. The acquisition screen is in place. Current CRSP links are joined at Compustat datadates, reduced to the latest date per permno/calendar year, then all multiply mapped gvkey-years are dropped. Link intervals are inclusive; date ties use stable link-start ordering. The supplied gvkey founding file replaces the original permno file as an input-vintage difference. Current mthcap is not used: market cap follows the Stata price-times-shares formula in millions.
+
 ## Open issues, ranked by severity and implementation cost
 
-- **Severity High; implementation cost Medium — Exact current-vintage CRSP map unavailable.** The supplied ccmlink.csv is a history of link intervals; the Stata uses a datadate-expanded CRSP_COMP_Linkfile2024.dta map. The port uses inclusive link calendar years and the latest link start to resolve permno-year overlaps, then drops all multiply mapped gvkey-years. Minimum fix: supply the same datadate-expanded map for a fully matched mapping audit.
-- **Severity High; implementation cost Low — S&P history may stop before the Compustat panel.** The port retains the supplied membership history and reproduces the Stata multi-spell numbering bug. It never labels later nonmembers as members merely to extend the curve. Minimum fix: provide membership spells covering the requested latest year; if correcting the Stata bug, publish that as a separate method change.
-- **Severity Medium; implementation cost Medium — Acquisition extracts precede the final estimation sample.** Completion years are recovered only after checking identical full deal-ID sequences in targetData.dta and acqData.dta, consistent with their consecutive preserve/save blocks. Target deduplication precedes the Philips acquirer merge. However, runPrereqs.do points the figure program to data/estimation/data_for_estimation_v4.dta, not these earlier extracts. Exact final deal selection and duplicate survivor order cannot be certified from the supplied extracts. Minimum fix: supply YearCompletedUnconditional, tgt_gvkey and sdc_dealno from that final estimation file.
+- **Severity High; implementation cost Low — S&P membership history is outdated.** The port retains the supplied membership history and reproduces the Stata multi-spell numbering bug. Post-coverage observations are artifacts of that bug, so these outputs cannot be represented as current S&P membership. Minimum fix: provide updated membership spells; correcting the expansion bug should be identified as a separate method change.
 - **Severity Medium; implementation cost Low — Upstream stock vintage and founding differences.** The existing stock builder uses current INDL Compustat, a current CPI series and gvkey-based founding years. Those inputs differ from the authors’ original run. No pipeline code was changed. Minimum fix: run these figure programs on identical vintage inputs before attributing discrepancies exclusively to the translation.
 - **Severity Medium; implementation cost Low — BEA equity support screen.** Current stocks contain EPW stocks only. The port uses common nonmissing G2/S2 support for the otherwise unplotted BEA-equity screen. Historical support mismatches and negative BEA stocks are reported below. Minimum fix for strict certification: provide current G and S alongside the EPW panel.
 - **Severity Low; implementation cost Low — Image-only ROE reference.** PNG marker centers are calibrated to inspected axes; estimated digitization uncertainty is about 0.0015 ROE. Minimum fix: obtain the authors’ collapsed ROE series for an exact comparison.
@@ -61,17 +77,28 @@ Preserved: calendar-year lags; figure-specific samples; pooled winsorization; mi
 - Figure 8: exported 1977–2025; last nonmissing plotted year 2025.
 - Figure 9: exported 1977–2025; last nonmissing plotted year 2025.
 
+## Visual review
+
+Inspected the supplied PNGs and the generated comparison plots. The investment crossover and declining CAPEX path agree; the market-to-book peaks and adjusted levels broadly agree. The industry intensity lines overlap closely until the final partial historical year. Current ROE differs materially, whereas the historical-input replay overlays the published ROE chart. Plain matplotlib defaults are retained in the SVGs. No PDFs were opened.
+
 ## Files and reproduction
 
-Public-safe plotted aggregates: `site/data/figNN.csv`; plots: `site/figures/out/figNN.svg`. Local-only sample, reference collapses and per-year validation: `data/figures_work/`. Scripts and this report are under `site/figures/`. All paths can be overridden with CLI options. Dependencies: python3, pandas, numpy, matplotlib.
+Plotted aggregates: `site/data/figNN.csv`; plots: `site/figures/out/figNN.svg`. Local-only sample, reference collapses and per-year validation: `data/figures_work/`. Scripts and this report are under `site/figures/`. Sample, figure and validator paths have CLI overrides. Dependencies: python3, pandas, numpy, matplotlib. Figures extend to their latest eligible fiscal year; no empty year is filled with invented observations.
 
 ```sh
+python3 site/figures/prepare_author_inputs.py
 python3 site/figures/sample.py
 python3 site/figures/fig01_rd_capex.py
 python3 site/figures/fig07_intensity.py
 python3 site/figures/fig08_mb.py
 python3 site/figures/fig09_roe.py
+python3 site/figures/diagnose_validation.py
 python3 site/figures/validate_figures.py
 ```
 
 Validation does not pass merely because a correlation is high. Every relative discrepancy exceeding the requested threshold is listed in `data/figures_work/validation_by_year.csv`; systematic differences remain open until explained.
+
+## Missing inputs
+
+- Missing from the current stocks panel: BEA G and S stocks for direct evaluation of the BEA-equity support screen. Historical support equivalence is checked above; EPW stock availability supplies the documented current support proxy.
+- Missing from the supplied CRSPdsp500list.dta: membership spells after its final actual end date. Later flags are artifacts, as explained above.

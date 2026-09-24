@@ -1,5 +1,7 @@
 """Matched-vintage audits to separate translation errors from new input data."""
 import json
+import argparse
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from sample import ROOT, INPUTS, WORK, prepare_market, KEY, winsor, ratio
@@ -7,11 +9,17 @@ from validate_figures import AUTHOR, digitize_roe
 import fig08_mb as f08
 import fig09_roe as f09
 
+ap=argparse.ArgumentParser(description=__doc__)
+ap.add_argument('--inputs',type=Path,default=INPUTS)
+ap.add_argument('--work',type=Path,default=WORK)
+ap.add_argument('--author-root',type=Path,default=AUTHOR)
+args=ap.parse_args()
+INPUTS,WORK,AUTHOR=args.inputs,args.work,args.author_root
 s=pd.read_csv(WORK/'sample.csv',low_memory=False)
 a=pd.read_stata(INPUTS/'figures/figure1data.dta',convert_categoricals=False)
 a['gvkey']=pd.to_numeric(a.gvkey)
 a['sic']=pd.to_numeric(a.sic,errors='coerce')
-old=prepare_market(a)
+old=prepare_market(a,INPUTS,WORK/'author_deals.csv')
 p=pd.read_stata(AUTHOR/'data/mainStocks.dta',columns=KEY+['G','S','G2','S2','G2depr','S2depr','epwxi'],convert_categoricals=False).rename(columns={'epwxi':'gamma'})
 p['gvkey']=pd.to_numeric(p.gvkey)
 old=old.merge(p,on=KEY,how='left',validate='one_to_one')
@@ -39,6 +47,16 @@ spmatch=s[KEY+['sp500']].merge(a[KEY+['sp500']],on=KEY,suffixes=('_current','_au
 metric['sp500_flag_matched_disagreements']=int((spmatch.sp500_current.eq(1)!=spmatch.sp500_author.eq(1)).sum())
 metric['author_figure8_last_year']=int(ref.fyear.max())
 metric['current_bea_support_conditions']={'negative_G2':int((s.G2<0).sum()),'negative_S2':int((s.S2<0).sum())}
+years=pd.read_stata(AUTHOR/'data/mainStocks.dta',columns=['fyear'],convert_categoricals=False)
+metric['author_stock_year_counts']=years.fyear.value_counts().sort_index().tail(3).to_dict()
+final=pd.read_csv(WORK/'author_deals.csv')
+t=pd.read_stata(INPUTS/'figures/targetData.dta',convert_categoricals=False)
+ac=pd.read_stata(INPUTS/'figures/acqData.dta',convert_categoricals=False)
+metric['final_deals_vs_extracts']={
+    'rows':len(final),
+    'deal_order_matches':bool(np.array_equal(final.sdc_dealno,t.sdc_dealno)),
+    'target_order_matches':bool(np.array_equal(final.tgt_gvkey,t.tgt_gvkey)),
+    'completion_order_matches':bool(np.array_equal(final.YearCompletedUnconditional,ac.YearCompletedUnconditional,equal_nan=True))}
 from common import plt
 fig,ax=plt.subplots()
 for col in ['roe_inc2','roe_inc_epw2','diffUnadj']:

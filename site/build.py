@@ -62,6 +62,43 @@ CITATION: Ewens, Michael, Ryan Peters and Sean Wang. "Measuring Intangible Capit
 """
 
 
+def md_to_html(md: str, base_blob: str, base_raw: str) -> str:
+    """Small Markdown renderer for the repo README: headings, paragraphs, bullets, links, images,
+    inline code, bold, code fences. Relative links resolve to the GitHub blob/raw URLs."""
+    import re, html as _h
+    def inline(t):
+        t = _h.escape(t, quote=False)
+        t = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", lambda m: f'<img src="{m.group(2) if m.group(2).startswith("http") else base_raw + m.group(2)}" alt="{m.group(1)}">', t)
+        t = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", lambda m: f'<a href="{m.group(2) if m.group(2).startswith("http") else base_blob + m.group(2)}">{m.group(1)}</a>', t)
+        t = re.sub(r"`([^`]+)`", r"<code>\1</code>", t)
+        t = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", t)
+        t = re.sub(r"(?<![\w*])_([^_]+)_(?![\w*])", r"<em>\1</em>", t)
+        return t
+    out, para, lst, code = [], [], [], None
+    def flush():
+        nonlocal para, lst
+        if para: out.append("<p>" + inline(" ".join(para)) + "</p>"); para = []
+        if lst: out.append("<ul>" + "".join(f"<li>{inline(x)}</li>" for x in lst) + "</ul>"); lst = []
+    for line in md.splitlines():
+        if line.startswith("```"):
+            if code is None: flush(); code = []
+            else: out.append("<pre>" + _h.escape("\n".join(code)) + "</pre>"); code = None
+            continue
+        if code is not None: code.append(line); continue
+        m = re.match(r"^(#{1,6})\s+(.*)", line)
+        if m:
+            flush(); lvl = min(len(m.group(1)) + 1, 4)   # README h1 -> h2 on the page
+            out.append(f"<h{lvl}>{inline(m.group(2))}</h{lvl}>"); continue
+        if re.match(r"^\s*[*-]\s+", line):
+            if para: flush()
+            lst.append(re.sub(r"^\s*[*-]\s+", "", line)); continue
+        if not line.strip(): flush(); continue
+        if lst: lst[-1] += " " + line.strip()
+        else: para.append(line.strip())
+    flush()
+    return "\n".join(out)
+
+
 def figures_html():
     spec = json.load(open(SITE / "figures.json"))
     out = []
@@ -73,7 +110,8 @@ def figures_html():
         else:
             img = f'<div class="placeholder">Figure pending: {fg["title"]}</div>'
         link = f' <a href="data/{fg["id"]}.csv">Download the plotted numbers (CSV)</a>' if csv.exists() else ""
-        out.append(f'<figure id="{fg["id"]}"><h3>{fg["title"]}</h3>{img}<figcaption>{fg["caption"]}{link}</figcaption></figure>')
+        cls = ' class="wide"' if fg.get("wide") else ""
+        out.append(f'<figure id="{fg["id"]}"{cls}><h3>{fg["title"]}</h3>{img}<figcaption>{fg["caption"]}{link}</figcaption></figure>')
     return "\n".join(out)
 
 
@@ -88,7 +126,8 @@ def main():
     (DIST / "llms.txt").write_text("# intangiblesdata.org\n\n> Firm-year knowledge and organization capital stocks for U.S. public firms (Ewens, Peters and Wang 2024), updated as fiscal years close in Compustat.\n\n" + prompt)
     html = (SITE / "template.html").read_text()
     for k, v in f.items(): html = html.replace("{{" + k + "}}", str(v))
-    html = html.replace("{{params_rows}}", params_table()).replace("{{figures}}", figures_html()).replace("{{prompt}}", prompt.replace("<", "&lt;"))
+    readme = md_to_html((ROOT / "README.md").read_text(), REPO + "/blob/master/", REPO_RAW)
+    html = html.replace("{{readme}}", readme).replace("{{params_rows}}", params_table()).replace("{{figures}}", figures_html()).replace("{{prompt}}", prompt.replace("<", "&lt;"))
     (DIST / "index.html").write_text(html)
     print("built", DIST / "index.html")
 
