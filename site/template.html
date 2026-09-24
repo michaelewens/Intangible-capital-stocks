@@ -7,38 +7,47 @@
 <meta name="description" content="Annual knowledge and organization capital stocks for U.S. public firms, updated as fiscal years close, from Ewens, Peters and Wang (2024).">
 <link rel="alternate" type="text/plain" href="llms.txt">
 <style>
-  :root { --ink: #1a1a1a; --muted: #5c5c5c; --line: #d9d9d9; --accent: #1f4e79; --bg: #ffffff; --panel: #f4f6f8; }
+  :root { --ink: #1c1c1c; --muted: #666666; --line: #dcdcdc; --accent: #2c4a6e; --bg: #ffffff; --panel: #fafafa;
+          --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+          --sans: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; scroll-padding-top: 56px; }
-  body { margin: 0; font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink); background: var(--bg); line-height: 1.5; }
-  nav { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
-  nav .inner { max-width: 960px; margin: 0 auto; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: center; }
-  nav .brand { font-weight: 700; margin-right: auto; color: var(--ink); text-decoration: none; }
-  nav a { color: var(--accent); text-decoration: none; font-size: 0.95rem; }
-  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; }
-  h1 { font-size: 2rem; margin: 8px 0 4px; }
-  h2 { font-size: 1.4rem; margin: 44px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
-  h3 { font-size: 1.05rem; margin: 20px 0 8px; }
-  h4 { font-size: 1rem; margin: 16px 0 6px; }
-  .sub { color: var(--muted); margin: 0 0 16px; }
-  .panel { background: var(--panel); border-radius: 8px; padding: 20px; margin: 20px 0; }
-  .download { border: 2px solid var(--accent); }
-  .btn { display: inline-block; background: var(--accent); color: #fff; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 1.05rem; border: 0; cursor: pointer; }
-  .btn.secondary { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
-  .row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
-  pre { background: #fff; border: 1px solid var(--line); padding: 12px; overflow: auto; font-size: 0.85rem; max-height: 260px; }
-  table { border-collapse: collapse; margin: 8px 0 16px; }
-  td, th { border: 1px solid var(--line); padding: 6px 10px; text-align: left; font-size: 0.95rem; vertical-align: top; }
-  code { background: var(--panel); padding: 1px 4px; border-radius: 3px; font-size: 0.9em; }
-  .grid { display: grid; grid-template-columns: 1fr; gap: 28px; }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); background: var(--bg); line-height: 1.55; font-size: 17px; }
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,0.96); border-bottom: 1px solid var(--line); backdrop-filter: blur(4px); }
+  nav .inner { max-width: 920px; margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 4px 22px; align-items: baseline; }
+  nav .brand { font-family: var(--serif); font-weight: 600; font-size: 1.05rem; margin-right: auto; color: var(--ink); text-decoration: none; }
+  nav a { color: var(--ink); text-decoration: none; font-size: 0.92rem; letter-spacing: 0.01em; }
+  nav a:hover { color: var(--accent); }
+  main { max-width: 920px; margin: 0 auto; padding: 40px 20px 72px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: 2.5rem; letter-spacing: -0.01em; margin: 16px 0 8px; line-height: 1.15; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; margin: 56px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+  h3 { font-family: var(--serif); font-weight: 600; font-size: 1.15rem; margin: 24px 0 8px; }
+  h4 { font-family: var(--serif); font-weight: 600; font-size: 1.02rem; margin: 18px 0 6px; }
+  p { margin: 0 0 14px; }
+  a { color: var(--accent); }
+  .sub { font-family: var(--serif); font-size: 1.2rem; color: var(--muted); margin: 0 0 28px; line-height: 1.45; }
+  .panel { border: 1px solid var(--line); border-radius: 4px; padding: 24px 26px; margin: 24px 0; background: var(--bg); }
+  .panel h2 { margin-top: 0; border: 0; padding: 0; }
+  .download { border-color: var(--accent); }
+  .btn { display: inline-block; background: var(--accent); color: #fff; padding: 10px 18px; border-radius: 3px; text-decoration: none; font-weight: 600; font-size: 0.98rem; border: 1px solid var(--accent); cursor: pointer; font-family: var(--sans); }
+  .btn.secondary { background: #fff; color: var(--accent); }
+  .btn:hover { filter: brightness(1.08); }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px; }
+  pre { background: var(--panel); border: 1px solid var(--line); padding: 12px 14px; overflow: auto; font-size: 0.84rem; line-height: 1.45; max-height: 280px; border-radius: 3px; }
+  table { border-collapse: collapse; margin: 8px 0 18px; width: 100%; }
+  td, th { border-top: 1px solid var(--line); padding: 8px 10px 8px 0; text-align: left; font-size: 0.95rem; vertical-align: top; }
+  th { font-weight: 600; border-top: 0; border-bottom: 1px solid var(--ink); }
+  code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--panel); padding: 1px 4px; border-radius: 3px; font-size: 0.88em; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 36px 32px; }
   @media (min-width: 760px) { .grid { grid-template-columns: 1fr 1fr; } .grid figure.wide { grid-column: 1 / -1; } }
   figure { margin: 0; }
   figure h3 { margin-top: 0; }
-  figure img { width: 100%; height: auto; border: 1px solid var(--line); background: #fff; }
-  figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
+  figure img { width: 100%; height: auto; background: #fff; }
+  figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 8px; line-height: 1.45; }
   .placeholder { border: 1px dashed var(--line); padding: 60px 16px; text-align: center; color: var(--muted); }
   .readme img { max-width: 100%; }
-  footer { color: var(--muted); font-size: 0.9rem; margin-top: 48px; }
+  .readme h2 { font-size: 1.35rem; margin-top: 36px; border: 0; padding: 0; }
+  footer { color: var(--muted); font-size: 0.88rem; margin-top: 64px; border-top: 1px solid var(--line); padding-top: 16px; }
 </style>
 </head>
 <body>
@@ -57,11 +66,10 @@
   <p class="sub">Knowledge and organization capital stocks for U.S. public firms, built from Compustat with the parameter estimates of Ewens, Peters and Wang (2024), <em>Management Science</em>.</p>
 
   <section class="panel download" id="download">
-    <h2 style="margin-top:0;border:0">Download</h2>
+    <h2>Download</h2>
     <p><strong>Current release:</strong> {{release_date}}. {{n_rows}} firm-years, {{n_firms}} firms, fiscal years {{fy_min}} to {{fy_max}}. One row per Compustat firm and fiscal year.</p>
     <div class="row">
       <a class="btn" href="{{csv_url}}">Stocks, CSV ({{csv_mb}} MB)</a>
-      <a class="btn secondary" href="{{dta_url}}">Stocks, Stata</a>
       <a class="btn secondary" href="{{params_url}}">Parameters by SIC, CSV</a>
     </div>
     <table>
@@ -72,13 +80,13 @@
       <tr><td><code>orgCapital</code></td><td>Organization capital, net, nominal $ millions. Capitalized share of SG&amp;A.</td></tr>
       <tr><td><code>note</code></td><td>Blank when computed from reported data. Otherwise: <em>assets missing; no stock computed</em>, <em>assets missing; R&amp;D and SG&amp;A interpolated</em>, or <em>stock missing because an earlier year had no flows</em>.</td></tr>
     </table>
-    <pre>Stata:   use "{{dta_url}}", clear
+    <pre>Stata:   import delimited "{{csv_url}}", clear
 Python:  pd.read_csv("{{csv_url}}")
 R:       read.csv("{{csv_url}}")</pre>
   </section>
 
   <section class="panel" id="llm">
-    <h2 style="margin-top:0;border:0">Use this data with an LLM</h2>
+    <h2>Use this data with an LLM</h2>
     <p>Paste the prompt below into ChatGPT, Claude, Gemini, or any model that can read a URL. It carries the data location, the column definitions, the parameters, the method, and the citation.</p>
     <div class="row">
       <button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('prompt').textContent).then(()=>{this.textContent='Copied'})">Copy the LLM prompt</button>

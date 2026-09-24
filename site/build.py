@@ -26,7 +26,7 @@ def release_facts():
         "release_tag": RELEASE, "release_date": d.strftime("%B %-d, %Y"),
         "n_rows": f"{len(df):,}", "n_firms": f"{df.gvkey.nunique():,}",
         "fy_min": int(df.fyear.min()), "fy_max": int(df.fyear.max()),
-        "csv_url": REPO_RAW + RELEASE + ".csv", "dta_url": REPO_RAW + RELEASE + ".dta",
+        "csv_url": REPO_RAW + RELEASE + ".csv",
         "params_url": REPO_RAW + PARAMS, "repo": REPO,
         "csv_mb": f"{(ROOT / f'{RELEASE}.csv').stat().st_size / 1e6:.0f}",
     }

@@ -34,7 +34,7 @@ Estimates (Oct. 2023) with bootstrapped standard errors:
 
 ## Stocks for Compustat firms
 
-Current release: [`intangibleCapital_20260924.csv`](intangibleCapital_20260924.csv) or [`intangibleCapital_20260924.dta`](intangibleCapital_20260924.dta). One row per Compustat firm and fiscal year, 534,089 firm-years, 46,082 firms, fiscal years 1975 to 2026, built from Compustat as of June 30, 2026. Columns:
+Current release: [`intangibleCapital_20260924.csv`](intangibleCapital_20260924.csv). One row per Compustat firm and fiscal year, 534,089 firm-years, 46,082 firms, fiscal years 1975 to 2026, built from Compustat as of June 30, 2026. Columns:
 
 * `gvkey`: the Compustat unique identifier
 * `fyear`: the fiscal year
@@ -45,10 +45,6 @@ Current release: [`intangibleCapital_20260924.csv`](intangibleCapital_20260924.c
 All dollars are nominal, in Compustat units (millions). The stocks are _net_ assets, not gross, so a year-on-year change is net investment. Every Compustat firm-year is kept; a missing stock is explained in `note` rather than dropped.
 
 To load in Stata:
-
-`use "https://github.com/michaelewens/Intangible-capital-stocks/raw/master/intangibleCapital_20260924.dta", clear`
-
-or
 
 `import delimited "https://github.com/michaelewens/Intangible-capital-stocks/raw/master/intangibleCapital_20260924.csv", clear`
 
