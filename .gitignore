@@ -1,0 +1,4 @@
+# local inputs and working outputs (never committed)
+data/
+__pycache__/
+.DS_Store
