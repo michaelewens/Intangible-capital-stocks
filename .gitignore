@@ -2,3 +2,5 @@
 data/
 __pycache__/
 .DS_Store
+site/dist/
+site/figures/__pycache__/

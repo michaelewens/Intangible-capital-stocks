@@ -16,7 +16,10 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data" / "inputs"
 DB = os.environ.get("WRDS_CCM_DUCKDB", "/Users/me2731/Dropbox/Research/wrds_ccm/wrds_ccm.duckdb")
 FUNDA_COLS = ["cast(gvkey as int) as gvkey", "datadate", "cast(fyear as int) as fyear", "xrd", "xsga", "rdip", "cogs",
-              '"at" as at', "prcc_f", "sich", "curcd"]
+              '"at" as at', "prcc_f", "sich", "curcd",
+              # extra columns for the website figures (site/figures/)
+              "acqintan", "intan", "intano", "lt", "mkvalt", "ppent", "ppegt", "act", "dcpstk", "ao", "sale", "capx",
+              "dp", "dpact", "ni", "oancf", "ceq", "csho", "dltt", "dlc", "pstk", "gdwl"]
 
 
 def pull_compustat():
@@ -29,6 +32,9 @@ def pull_compustat():
     con.sql(q).df().to_csv(OUT / "funda.csv", index=False)
     con.sql("select cast(gvkey as int) as gvkey, sic, conm from company").df().to_csv(OUT / "company.csv", index=False)
     con.sql("select cast(gvkey as int) as gvkey, lpermno, linkdt, linkenddt from ccmlink where lpermno is not null").df().to_csv(OUT / "ccmlink.csv", index=False)
+    # CRSP monthly (for market cap fallback, annual returns, and the ROE figure), 1970 onward
+    con.sql("""select permno, mthcaldt, mthcap, mthprc, shrout, mthret, mthretx from msf
+               where mthcaldt >= '1970-01-01'""").df().to_csv(OUT / "msf.csv", index=False)
     meta = con.sql("select * from _meta").df()
     con.close()
     return meta

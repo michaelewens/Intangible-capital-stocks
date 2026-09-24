@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intangible Capital Data</title>
+<meta name="description" content="Quarterly-updated knowledge and organization capital stocks for U.S. public firms, from Ewens, Peters and Wang (2024).">
+<link rel="alternate" type="text/plain" href="llms.txt">
+<style>
+  :root { --ink: #1a1a1a; --muted: #5c5c5c; --line: #d9d9d9; --accent: #1f4e79; --bg: #ffffff; --panel: #f4f6f8; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink); background: var(--bg); line-height: 1.5; }
+  main { max-width: 900px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 2rem; margin: 0 0 4px; }
+  h2 { font-size: 1.35rem; margin: 40px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+  h3 { font-size: 1.05rem; margin: 0 0 8px; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  .llm { background: var(--panel); border: 2px solid var(--accent); border-radius: 8px; padding: 20px; margin: 24px 0; }
+  .llm h2 { margin-top: 0; border: 0; }
+  .btn { display: inline-block; background: var(--accent); color: #fff; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 1.05rem; border: 0; cursor: pointer; }
+  .btn.secondary { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+  pre { background: #fff; border: 1px solid var(--line); padding: 12px; overflow: auto; font-size: 0.85rem; max-height: 260px; }
+  table { border-collapse: collapse; margin: 8px 0 16px; }
+  td, th { border: 1px solid var(--line); padding: 6px 10px; text-align: left; font-size: 0.95rem; }
+  code { background: var(--panel); padding: 1px 4px; border-radius: 3px; font-size: 0.9em; }
+  figure { margin: 28px 0; }
+  figure img { width: 100%; height: auto; border: 1px solid var(--line); }
+  figcaption { color: var(--muted); font-size: 0.92rem; margin-top: 6px; }
+  .placeholder { border: 1px dashed var(--line); padding: 60px 16px; text-align: center; color: var(--muted); }
+  footer { color: var(--muted); font-size: 0.9rem; margin-top: 48px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Intangible Capital Data</h1>
+  <p class="sub">Knowledge and organization capital stocks for U.S. public firms, rebuilt each quarter from Compustat with the parameter estimates of Ewens, Peters and Wang (2024), <em>Management Science</em>.</p>
+  <p><strong>Current release:</strong> {{release_date}}. {{n_rows}} firm-years, {{n_firms}} firms, fiscal years {{fy_min}} to {{fy_max}}.</p>
+
+  <section class="llm" id="llm">
+    <h2>Use this data with an LLM</h2>
+    <p>Paste the prompt below into ChatGPT, Claude, Gemini, or any model that can read a URL. It gives the model the data location, the column definitions, the parameters, the method, and the citation.</p>
+    <div class="row">
+      <button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('prompt').textContent).then(()=>{this.textContent='Copied'})">Copy the LLM prompt</button>
+      <a class="btn secondary" href="prompt.txt">Open as plain text</a>
+      <a class="btn secondary" href="llms.txt">llms.txt</a>
+    </div>
+    <pre id="prompt">{{prompt}}</pre>
+  </section>
+
+  <h2 id="download">Download</h2>
+  <div class="row">
+    <a class="btn" href="{{csv_url}}">Stocks, CSV ({{csv_mb}} MB)</a>
+    <a class="btn secondary" href="{{dta_url}}">Stocks, Stata</a>
+    <a class="btn secondary" href="{{params_url}}">Parameters by SIC, CSV</a>
+  </div>
+  <table>
+    <tr><th>Column</th><th>Definition</th></tr>
+    <tr><td><code>gvkey</code></td><td>Compustat firm identifier</td></tr>
+    <tr><td><code>fyear</code></td><td>Fiscal year</td></tr>
+    <tr><td><code>knowCapital</code></td><td>Knowledge capital, net, nominal $ millions. Capitalized R&amp;D.</td></tr>
+    <tr><td><code>orgCapital</code></td><td>Organization capital, net, nominal $ millions. Capitalized share of SG&amp;A.</td></tr>
+    <tr><td><code>note</code></td><td>Blank when computed from reported data. Otherwise: <em>assets missing; no stock computed</em>, <em>assets missing; R&amp;D and SG&amp;A interpolated</em>, or <em>stock missing because an earlier year had no flows</em>.</td></tr>
+  </table>
+  <p>Load directly:</p>
+  <pre>Stata:   use "{{dta_url}}", clear
+Python:  pd.read_csv("{{csv_url}}")
+R:       read.csv("{{csv_url}}")</pre>
+
+  <h2 id="figures">What the data show</h2>
+  {{figures}}
+
+  <h2 id="method">How the stocks are built</h2>
+  <p>Each firm's R&amp;D and SG&amp;A history is capitalized with the perpetual inventory method. Knowledge capital depreciates at an industry-specific rate estimated in the paper; organization capital accumulates a share gamma of SG&amp;A and depreciates at 20 percent a year. Initial stocks are imputed from firm age. Full method and code: <a href="{{repo}}/blob/master/pipeline/README.md">pipeline README</a>.</p>
+  <table>
+    <tr><th>Fama-French industry</th><th>Knowledge depreciation</th><th>Organization depreciation</th><th>SG&amp;A investment share (gamma)</th></tr>
+    {{params_rows}}
+  </table>
+  <p>Every release rebuilds all years from current Compustat, so a firm's history can change between releases when Compustat revises its industry code or restates financials. <a href="{{repo}}/blob/master/STOCK_CHANGES.md">Read how much and why.</a></p>
+
+  <h2 id="updates">Updates</h2>
+  <p>New releases follow Compustat's quarterly updates. To be notified, watch releases on <a href="{{repo}}">the GitHub repository</a> (Watch, Custom, Releases). The figures on this page are rebuilt from the same release by code in the repository.</p>
+
+  <h2 id="cite">Citation</h2>
+  <p>Ewens, Michael, Ryan Peters and Sean Wang. "Measuring Intangible Capital with Market Prices." <em>Management Science</em> 71.1 (2024): 407-427. <a href="https://doi.org/10.1287/mnsc.2021.02058">doi:10.1287/mnsc.2021.02058</a></p>
+
+  <footer>Release {{release_tag}}. Data and code: <a href="{{repo}}">github.com/michaelewens/Intangible-capital-stocks</a>.</footer>
+</main>
+</body>
+</html>
