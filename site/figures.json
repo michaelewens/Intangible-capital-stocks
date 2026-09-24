@@ -13,7 +13,7 @@
  {
   "id": "fig07",
   "title": "Intangible intensity by industry",
-  "caption": "Mean share of intangible assets (knowledge plus organization capital plus balance-sheet intangibles) in the total capital stock, by Fama-French industry and fiscal year. Paper Figure 7, extended.",
+  "caption": "Equal-weighted mean across firms, within each Fama-French industry and fiscal year, of intangible assets (knowledge and organization capital plus balance-sheet intangibles) over the total capital stock (intangibles plus gross PP&E), lagged one year. Every firm counts once regardless of size. Follows the paper's Figure 7, which uses gross PP&E; the plotted-numbers file also carries the same series with net PP&E.",
   "wide": true
  },
  {
