@@ -1,6 +1,7 @@
 """Shared helpers for the website figures. Sample columns come from site/figures/sample.py."""
 from pathlib import Path
 import pandas as pd
+import style  # noqa: F401  (shared rcParams)
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt

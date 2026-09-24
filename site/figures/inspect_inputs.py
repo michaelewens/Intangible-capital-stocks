@@ -1,8 +1,14 @@
 """Print local figure input schemas; no data are written or published."""
 from pathlib import Path
+import argparse
 import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 AUTHOR = Path('/Users/me2731/Dropbox/Research/research_assistants/choi_2024/intangibles_v2')
+ap=argparse.ArgumentParser(description=__doc__)
+ap.add_argument('--root',type=Path,default=ROOT)
+ap.add_argument('--author-root',type=Path,default=AUTHOR)
+args=ap.parse_args()
+ROOT,AUTHOR=args.root,args.author_root
 for p in sorted((ROOT/'data/inputs/figures').glob('*.dta')):
     if p.name not in ['dataForFigure3.dta', 'figure4data.dta']:
         with pd.read_stata(p, iterator=True, convert_categoricals=False) as r:

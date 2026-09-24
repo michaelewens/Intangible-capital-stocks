@@ -1,9 +1,16 @@
 """Audit the dated CCM map against the authors' actual stored map, offline."""
 from pathlib import Path
+import argparse
 import json
 import pandas as pd
 from sample import INPUTS, WORK, KEY
 from validate_figures import AUTHOR
+ap=argparse.ArgumentParser(description=__doc__)
+ap.add_argument('--inputs',type=Path,default=INPUTS)
+ap.add_argument('--work',type=Path,default=WORK)
+ap.add_argument('--author-root',type=Path,default=AUTHOR)
+args=ap.parse_args()
+INPUTS,WORK,AUTHOR=args.inputs,args.work,args.author_root
 original=pd.read_stata(AUTHOR/'data/intermediate/private/CRSP_COMP_Linkfile2024.dta',columns=['gvkey','lpermno','datadate'],convert_categoricals=False)
 original['gvkey']=pd.to_numeric(original.gvkey,errors='coerce')
 original['fyear']=original.datadate.dt.year

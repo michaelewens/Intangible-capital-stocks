@@ -8,7 +8,7 @@
  {
   "id": "fig02",
   "title": "The stocks alongside physical capital",
-  "caption": "Aggregate knowledge capital, organization capital, and gross property, plant and equipment across all firms in the sample, by fiscal year, nominal dollars."
+  "caption": "Aggregate knowledge capital, organization capital, and net property, plant and equipment across all firms in the sample, by fiscal year, nominal dollars."
  },
  {
   "id": "fig07",
@@ -19,7 +19,7 @@
  {
   "id": "fig04",
   "title": "The cross-section in the latest fiscal year",
-  "caption": "Distribution of intangible intensity across firms in the latest fiscal year, by industry."
+  "caption": "Distribution of intangible intensity across firms in the latest fiscal year with full coverage, by Fama-French industry. Each shape is the density of firms; the x marks the mean."
  },
  {
   "id": "fig03",

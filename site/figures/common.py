@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 os.environ.setdefault('MPLCONFIGDIR',str(Path(__file__).resolve().parents[2]/'data/figures_work/matplotlib'))
 os.environ.setdefault('XDG_CACHE_HOME',str(Path(__file__).resolve().parents[2]/'data/figures_work/cache'))
+import style  # noqa: F401  (shared rcParams)
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt

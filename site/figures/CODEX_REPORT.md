@@ -42,6 +42,7 @@ The final deal keys were found in the authors’ local estimation file and stage
 ## Open issues, ranked by severity and implementation cost
 
 - **Severity High; implementation cost Low — S&P membership history is outdated.** The port retains the supplied membership history and reproduces the Stata multi-spell numbering bug. Post-coverage observations are artifacts of that bug, so these outputs cannot be represented as current S&P membership. Minimum fix: provide updated membership spells; correcting the expansion bug should be identified as a separate method change.
+- **Severity Medium; implementation cost Medium — Market-to-book reference is an older intermediate.** The stored market-to-book panel ends earlier than the supplied figure sample and stock panel. The report includes raw-ratio and same-historical-source replay differences, so the early-year discrepancies are not certified as harmless vintage noise. Minimum fix: supply the figure sample and stocks from the exact run that wrote dataForFigure8.dta, or a newer dataForFigure8.dta matching the supplied figure sample.
 - **Severity Medium; implementation cost Low — Upstream stock vintage and founding differences.** The existing stock builder uses current INDL Compustat, a current CPI series and gvkey-based founding years. Those inputs differ from the authors’ original run. No pipeline code was changed. Minimum fix: run these figure programs on identical vintage inputs before attributing discrepancies exclusively to the translation.
 - **Severity Medium; implementation cost Low — BEA equity support screen.** Current stocks contain EPW stocks only. The port uses common nonmissing G2/S2 support for the otherwise unplotted BEA-equity screen. Historical support mismatches and negative BEA stocks are reported below. Minimum fix for strict certification: provide current G and S alongside the EPW panel.
 - **Severity Low; implementation cost Low — Image-only ROE reference.** PNG marker centers are calibrated to inspected axes; estimated digitization uncertainty is about 0.0015 ROE. Minimum fix: obtain the authors’ collapsed ROE series for an exact comparison.
@@ -72,6 +73,41 @@ The final deal keys were found in the authors’ local estimation file and stage
   "sp500_last_year": 2025
 }
 ```
+
+Historical stock-panel tail counts (the final year is incomplete):
+```json
+{
+  "2022.0": 12289,
+  "2023.0": 12050,
+  "2024.0": 288
+}
+```
+
+Acquisition extract audit against the staged final file:
+```json
+{
+  "rows": 19269,
+  "deal_order_matches": true,
+  "target_order_matches": true,
+  "completion_order_matches": true
+}
+```
+
+Current reconstructed CCM map versus the authors’ dated map (different input vintages):
+```json
+{
+  "join_counts": {
+    "both": 305905,
+    "right_only": 75867,
+    "left_only": 6708
+  },
+  "matched_key_disagreements": 251,
+  "original_year_min": 1950,
+  "original_year_max": 2024
+}
+```
+
+Numerical regression checks passed for calendar gaps, pooled clipping, depreciation across gaps, intensity timing, missing numerator handling and membership-screen timing. Re-run with `python3 site/figures/check_ports.py`.
 - Figure 1: exported 1977–2026; last nonmissing plotted year 2025.
 - Figure 7: exported 1977–2025; last nonmissing plotted year 2025.
 - Figure 8: exported 1977–2025; last nonmissing plotted year 2025.
