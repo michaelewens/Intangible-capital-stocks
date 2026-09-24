@@ -106,7 +106,7 @@ def figures_html():
         svg = SITE / "figures" / "out" / f"{fg['id']}.svg"
         csv = SITE / "data" / f"{fg['id']}.csv"
         if svg.exists():
-            img = f'<img src="figures/{fg["id"]}.svg" alt="{fg["title"]}">'
+            img = f'<img src="figures/{fg["id"]}.svg?v={int(svg.stat().st_mtime)}" alt="{fg["title"]}">'
         else:
             img = f'<div class="placeholder">Figure pending: {fg["title"]}</div>'
         link = f' <a href="data/{fg["id"]}.csv">Download the plotted numbers (CSV)</a>' if csv.exists() else ""

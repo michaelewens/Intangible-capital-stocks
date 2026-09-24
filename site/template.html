@@ -34,6 +34,7 @@
   .btn:hover { filter: brightness(1.08); }
   .row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px; }
   pre { background: var(--panel); border: 1px solid var(--line); padding: 12px 14px; overflow: auto; font-size: 0.84rem; line-height: 1.45; max-height: 280px; border-radius: 3px; }
+  pre#prompt { white-space: pre-wrap; word-break: break-word; }
   table { border-collapse: collapse; margin: 8px 0 18px; width: 100%; }
   td, th { border-top: 1px solid var(--line); padding: 8px 10px 8px 0; text-align: left; font-size: 0.95rem; vertical-align: top; }
   th { font-weight: 600; border-top: 0; border-bottom: 1px solid var(--ink); }
@@ -110,7 +111,6 @@ R:       read.csv("{{csv_url}}")</pre>
   <p>The stocks are annual. Because firms' fiscal years end in different months, the file is refreshed a few times a year as new fiscal years close in Compustat. Every release rebuilds all years from current Compustat, so a firm's history can change between releases when Compustat revises its industry code or restates financials. <a href="{{repo}}/blob/master/STOCK_CHANGES.md">Read how much and why.</a> To be notified of releases, watch the <a href="{{repo}}">GitHub repository</a> (Watch, Custom, Releases).</p>
 
   <h2 id="docs">Documentation</h2>
-  <p class="sub">The repository README, rendered from the current commit.</p>
   <div class="readme">
   {{readme}}
   </div>
