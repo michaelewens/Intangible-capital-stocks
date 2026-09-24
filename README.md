@@ -6,7 +6,7 @@ This repository contains the parameter estimates for intangible capital accumula
 
 * April 2019: updated the goodwill adjustment and fixed a bug in the estimation code. The parameter estimates changed.
 * October 2023: fixed a small data error in the estimation sample. Small changes to the parameter estimates and stocks; no meaningful change to the relative performance of the paper's intangible stocks.
-* September 2026: the stocks are now rebuilt from current Compustat with the October 2023 parameter estimates (unchanged) and released quarterly. The construction code is in `pipeline/`. Coverage extends from fiscal 1975 through the latest reported fiscal year.
+* September 2026: the stocks are now rebuilt from current Compustat with the October 2023 parameter estimates (unchanged) and refreshed as new fiscal years close in Compustat (a few times a year, since fiscal year-ends differ across firms). The construction code is in `pipeline/`. Coverage extends from fiscal 1975 through the latest reported fiscal year.
 
 ## Primer on capitalizing intangibles: the perpetual inventory model
 
@@ -78,7 +78,7 @@ Dijun Liu's earlier [Python script](intangibes_cleaned.py) reproduces the 2019 s
 
 ## Updates
 
-New releases are posted here each quarter after Compustat updates. To be notified, use GitHub's **Watch → Custom → Releases** on this repository.
+The stocks are annual. New releases are posted a few times a year as fiscal years close in Compustat. To be notified, use GitHub's **Watch → Custom → Releases** on this repository.
 
 ## Citation
 

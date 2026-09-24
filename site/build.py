@@ -15,7 +15,7 @@ SITE = ROOT / "site"
 DIST = SITE / "dist"
 REPO_RAW = "https://github.com/michaelewens/Intangible-capital-stocks/raw/master/"
 REPO = "https://github.com/michaelewens/Intangible-capital-stocks"
-RELEASE = "intangibleCapital_20260924"          # updated by the quarterly release script
+RELEASE = "intangibleCapital_20260924"          # updated by the release script
 PARAMS = "capital_accum_parameters_2023.csv"
 
 
@@ -85,7 +85,7 @@ def main():
     for p in (SITE / "data").glob("*.csv"): shutil.copy(p, DIST / "data" / p.name)
     prompt = llm_prompt(f)
     (DIST / "prompt.txt").write_text(prompt)
-    (DIST / "llms.txt").write_text("# intangiblesdata.org\n\n> Firm-year knowledge and organization capital stocks for U.S. public firms (Ewens, Peters and Wang 2024), rebuilt quarterly from Compustat.\n\n" + prompt)
+    (DIST / "llms.txt").write_text("# intangiblesdata.org\n\n> Firm-year knowledge and organization capital stocks for U.S. public firms (Ewens, Peters and Wang 2024), updated as fiscal years close in Compustat.\n\n" + prompt)
     html = (SITE / "template.html").read_text()
     for k, v in f.items(): html = html.replace("{{" + k + "}}", str(v))
     html = html.replace("{{params_rows}}", params_table()).replace("{{figures}}", figures_html()).replace("{{prompt}}", prompt.replace("<", "&lt;"))
