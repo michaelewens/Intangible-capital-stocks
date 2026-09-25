@@ -131,7 +131,9 @@ def main(theme="modern_indigo", out_name="index.html"):
     (DIST / "llms.txt").write_text("# intangiblesdata.org\n\n> Firm-year knowledge and organization capital stocks for U.S. public firms (Ewens, Peters and Wang 2024), updated as fiscal years close in Compustat.\n\n" + prompt)
     html = (SITE / "template.html").read_text().replace("{{theme_css}}", (SITE / "themes" / f"{theme}.css").read_text())
     for k, v in f.items(): html = html.replace("{{" + k + "}}", str(v))
-    readme = md_to_html((ROOT / "README.md").read_text(), REPO + "/blob/master/", REPO_RAW)
+    # the previous-release (.dta) paragraph stays in the repo README but not on the page
+    readme_md = "\n".join(l for l in (ROOT / "README.md").read_text().split("\n") if not l.startswith("The previous release,"))
+    readme = md_to_html(readme_md, REPO + "/blob/master/", REPO_RAW)
     html = html.replace("{{readme}}", readme).replace("{{params_rows}}", params_table()).replace("{{figures}}", figures_html()).replace("{{prompt}}", prompt.replace("<", "&lt;"))
     (DIST / out_name).write_text(html)
     print("built", DIST / out_name, "theme", theme)
