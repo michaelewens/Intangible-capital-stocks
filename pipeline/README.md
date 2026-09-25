@@ -16,6 +16,8 @@ paper's headline stocks. Verified against the October 2024 Stata run on identica
 
 ## Run
 
+For a release, `python3 release.py` at the repository root runs every step below plus the figures, the site build, and the release notes; `--publish` then commits, pushes, deploys, and tags. The manual steps are:
+
 ```bash
 export FRED_API_KEY=...
 python3 pipeline/pull_inputs_local.py

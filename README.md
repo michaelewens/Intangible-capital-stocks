@@ -34,7 +34,9 @@ Estimates (Oct. 2023) with bootstrapped standard errors:
 
 ## Stocks for Compustat firms
 
-Current release: [`intangibleCapital_20260924.csv`](intangibleCapital_20260924.csv). One row per Compustat firm and fiscal year, 534,089 firm-years, 46,082 firms, fiscal years 1975 to 2026, built from Compustat as of June 30, 2026. Columns:
+<!-- release:begin -->
+Current release: [`intangibleCapital_20260924.csv`](intangibleCapital_20260924.csv). One row per Compustat firm and fiscal year, 534,089 firm-years, 46,082 firms, fiscal years 1975 to 2026, built from Compustat as of June 30, 2026.
+<!-- release:end --> Columns:
 
 * `gvkey`: the Compustat unique identifier
 * `fyear`: the fiscal year
@@ -74,7 +76,7 @@ Dijun Liu's earlier [Python script](intangibes_cleaned.py) reproduces the 2019 s
 
 ## Updates
 
-The stocks are annual. New releases are posted a few times a year as fiscal years close in Compustat. To be notified, use GitHub's **Watch → Custom → Releases** on this repository.
+The stocks are annual. New releases are posted a few times a year as fiscal years close in Compustat. [`RELEASES.md`](RELEASES.md) records, for each release, how much the stocks moved relative to the previous one; `release.py` builds and publishes a release in one command. To be notified, use GitHub's **Watch → Custom → Releases** on this repository.
 
 ## Citation
 
