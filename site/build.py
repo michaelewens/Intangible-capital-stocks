@@ -125,6 +125,7 @@ def main(theme="modern_indigo", out_name="index.html"):
     (DIST / "figures").mkdir(exist_ok=True); (DIST / "data").mkdir(exist_ok=True)
     for p in (SITE / "figures" / "out").glob("*.svg"): shutil.copy(p, DIST / "figures" / p.name)
     for p in (SITE / "data").glob("*.csv"): shutil.copy(p, DIST / "data" / p.name)
+    for p in (SITE / "static").glob("*"): shutil.copy(p, DIST / p.name)
     prompt = llm_prompt(f)
     (DIST / "prompt.txt").write_text(prompt)
     (DIST / "llms.txt").write_text("# intangiblesdata.org\n\n> Firm-year knowledge and organization capital stocks for U.S. public firms (Ewens, Peters and Wang 2024), updated as fiscal years close in Compustat.\n\n" + prompt)

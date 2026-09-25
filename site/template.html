@@ -6,6 +6,9 @@
 <title>Intangible Capital Data</title>
 <meta name="description" content="Annual knowledge and organization capital stocks for U.S. public firms, updated as fiscal years close, from Ewens, Peters and Wang (2024).">
 <link rel="alternate" type="text/plain" href="llms.txt">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 {{theme_css}}
 </style>
@@ -13,9 +16,9 @@
 <body>
 <nav><div class="inner">
   <a class="brand" href="#top">Intangible Capital Data</a>
+  <a href="#llm">LLM prompt</a>
   <a href="#download">Download</a>
   <a href="#python">Python</a>
-  <a href="#llm">LLM prompt</a>
   <a href="#figures">Figures</a>
   <a href="#method">Method</a>
   <a href="#docs">Documentation</a>
@@ -25,6 +28,17 @@
 <main id="top">
   <h1>Intangible Capital Data</h1>
   <p class="sub">Knowledge and organization capital stocks for U.S. public firms, built from Compustat with the parameter estimates of Ewens, Peters and Wang (2024), <em>Management Science</em>.</p>
+
+  <section class="panel" id="llm">
+    <h2>Use this data with an LLM</h2>
+    <p>Paste the prompt below into ChatGPT, Claude, Gemini, or any model that can read a URL. It carries the data location, the column definitions, the parameters, the method, and the citation.</p>
+    <div class="row">
+      <button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('prompt').textContent).then(()=>{this.textContent='Copied'})">Copy the LLM prompt</button>
+      <a class="btn secondary" href="prompt.txt">Plain text</a>
+      <a class="btn secondary" href="llms.txt">llms.txt</a>
+    </div>
+    <pre id="prompt">{{prompt}}</pre>
+  </section>
 
   <section class="panel download" id="download">
     <h2>Download</h2>
@@ -57,17 +71,6 @@ stocks = ic.load(release="{{release_short}}")  # pin this release for reproducib
 params = ic.parameters()              # depreciation rates and gamma by SIC
 merged = ic.merge_compustat(funda)    # your Compustat frame, stocks attached</pre>
     <p><a href="https://pypi.org/project/intangiblecapital/">intangiblecapital on PyPI</a>. Source in the repository under <code>python/</code>.</p>
-  </section>
-
-  <section class="panel" id="llm">
-    <h2>Use this data with an LLM</h2>
-    <p>Paste the prompt below into ChatGPT, Claude, Gemini, or any model that can read a URL. It carries the data location, the column definitions, the parameters, the method, and the citation.</p>
-    <div class="row">
-      <button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('prompt').textContent).then(()=>{this.textContent='Copied'})">Copy the LLM prompt</button>
-      <a class="btn secondary" href="prompt.txt">Plain text</a>
-      <a class="btn secondary" href="llms.txt">llms.txt</a>
-    </div>
-    <pre id="prompt">{{prompt}}</pre>
   </section>
 
   <h2 id="figures">What the data show</h2>
