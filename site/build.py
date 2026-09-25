@@ -23,7 +23,7 @@ def release_facts():
     df = pd.read_csv(ROOT / f"{RELEASE}.csv")
     d = date(int(RELEASE[-8:-4]), int(RELEASE[-4:-2]), int(RELEASE[-2:]))
     return {
-        "release_tag": RELEASE, "release_date": d.strftime("%B %-d, %Y"),
+        "release_tag": RELEASE, "release_short": RELEASE[-8:], "release_date": d.strftime("%B %-d, %Y"),
         "n_rows": f"{len(df):,}", "n_firms": f"{df.gvkey.nunique():,}",
         "fy_min": int(df.fyear.min()), "fy_max": int(df.fyear.max()),
         "csv_url": REPO_RAW + RELEASE + ".csv",

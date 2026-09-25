@@ -14,6 +14,7 @@
 <nav><div class="inner">
   <a class="brand" href="#top">Intangible Capital Data</a>
   <a href="#download">Download</a>
+  <a href="#python">Python</a>
   <a href="#llm">LLM prompt</a>
   <a href="#figures">Figures</a>
   <a href="#method">Method</a>
@@ -43,6 +44,19 @@
     <pre>Stata:   import delimited "{{csv_url}}", clear
 Python:  pd.read_csv("{{csv_url}}")
 R:       read.csv("{{csv_url}}")</pre>
+  </section>
+
+  <section class="panel" id="python">
+    <h2>Python package</h2>
+    <p>One line installs a loader that downloads the current release once, caches it, and can pin a release or attach the stocks to your own Compustat frame on <code>gvkey</code> and <code>fyear</code>.</p>
+    <pre>pip install intangiblecapital
+
+import intangiblecapital as ic
+stocks = ic.load()                    # current release, cached after the first download
+stocks = ic.load(release="{{release_short}}")  # pin this release for reproducibility
+params = ic.parameters()              # depreciation rates and gamma by SIC
+merged = ic.merge_compustat(funda)    # your Compustat frame, stocks attached</pre>
+    <p><a href="https://pypi.org/project/intangiblecapital/">intangiblecapital on PyPI</a>. Source in the repository under <code>python/</code>.</p>
   </section>
 
   <section class="panel" id="llm">
