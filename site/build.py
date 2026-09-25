@@ -54,7 +54,11 @@ Stocks are net (after depreciation), so year-on-year changes are net investment.
 
 PARAMETERS: {f['params_url']} gives, by 4-digit SIC, the knowledge depreciation rate (knowDepr), organization depreciation rate (organDepr, 0.20), the share of SG&A treated as investment (gamma), and the Fama-French 5 industry. Baseline by industry (knowDepr / gamma): Consumer 0.43 / 0.20, Manufacturing 0.50 / 0.21, High-tech 0.42 / 0.37, Health 0.33 / 0.51, Other 0.35 / 0.22.
 
+LOADING: `pip install intangiblecapital` then `import intangiblecapital as ic; stocks = ic.load()` (cached; `ic.load(release="{f['release_tag'][-8:]}")` pins this release; `ic.merge_compustat(funda)` attaches the stocks to a Compustat frame on gvkey and fyear). Or read the CSV directly with pandas, Stata `import delimited`, or R `read.csv`.
+
 METHOD: perpetual inventory. Knowledge capital: K_t = (1 - knowDepr) K_(t-1) + R&D_t. Organization capital: O_t = 0.8 O_(t-1) + gamma x SG&A_t (SG&A net of R&D). Initial stocks imputed from firm age. Details: {f['repo']}/blob/master/pipeline/README.md
+
+PAPER: the full author manuscript is in the repository as Markdown: {f['repo']}/blob/master/paper/Ewens_Peters_Wang_2024_manuscript.md. Read Section 1 for the model and what the stocks measure, Section 2.1 for data and sample, Sections 3 and 4 for how the parameters were estimated and their values, Section 5 for validation against market values, Sections 6.2 and 6.3 for industry and time patterns and the effect on market-to-book and ROE, Section 7 for robustness.
 
 CAVEAT: every release rebuilds all years from current Compustat, so a firm's history can change between releases (industry code revisions, restated financials). Cite the release date. Details: {f['repo']}/blob/master/STOCK_CHANGES.md
 

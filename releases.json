@@ -1,0 +1,6 @@
+{
+  "releases": [
+    {"tag": "20260924", "date": "2026-09-24", "file": "intangibleCapital_20260924.csv", "compustat_asof": "2026-06-30", "fyear_min": 1975, "fyear_max": 2026, "rows": 534089},
+    {"tag": "090123", "date": "2023-09-01", "file": "intangibleCapital_090123.dta", "fyear_min": 1975, "fyear_max": 2019, "rows": 423710, "note": "previous release, Stata format"}
+  ]
+}
