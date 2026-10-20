@@ -188,6 +188,13 @@ def main():
     run(["git", "commit", "-m", f"Release {tag}\n\n{notes}\nDesigned by Michael Ewens. Built with release.py."])
     run(["git", "push", "origin", "master"])
     run(["wrangler", "deploy"], cwd=ROOT / "site")
+    step("check the live page")   # curl: Cloudflare blocks urllib's user agent
+    live = subprocess.run(["curl", "-sL", f"https://intangiblesdata.org/?v={tag}"], capture_output=True, text=True).stdout
+    sys.path.insert(0, str(ROOT / "site")); from build import check_page
+    check_page(live)
+    if f"intangibleCapital_{tag}.csv" not in live:
+        sys.exit(f"live page does not link intangibleCapital_{tag}.csv")
+    print("  live page passes the page check and links this release")
     if subprocess.run(["gh", "release", "view", f"v{tag}"], cwd=ROOT, capture_output=True).returncode == 0:
         print(f"  GitHub release v{tag} already exists; not recreated")
     else:
