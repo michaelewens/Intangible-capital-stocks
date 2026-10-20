@@ -1,21 +1,21 @@
 # Figure ports: run report
 
-Shared panel: 599,379 firm-years; latest fiscal year 2026. Results below were computed by this run. Absolute differences use chart ratio units; multiply ROE differences by 100 for percentage points.
+Shared panel: 600,028 firm-years; latest fiscal year 2026. Results below were computed by this run. Absolute differences use chart ratio units; multiply ROE differences by 100 for percentage points.
 
 | Figure | Series | Years | Correlation | Mean absolute difference | Years over 5% |
 |---|---|---|---:|---:|---:|
-| 01 | rdAssets | 1977–2023 | 0.999994 | 0.000267 | 0/47 |
-| 01 | capxAssets | 1977–2023 | 0.999975 | 0.000179 | 0/47 |
-| 07 | intensity2 industry=1 | 1977–2024 | 0.998878 | 0.001152 | 0/48 |
-| 07 | intensity2 industry=2 | 1977–2024 | 0.995313 | 0.001501 | 1/48 |
-| 07 | intensity2 industry=3 | 1977–2024 | 0.997847 | 0.001666 | 1/48 |
-| 07 | intensity2 industry=4 | 1977–2024 | 0.994268 | 0.002046 | 1/48 |
+| 01 | rdAssets | 1977–2023 | 0.999994 | 0.000268 | 0/47 |
+| 01 | capxAssets | 1977–2023 | 0.999975 | 0.000187 | 0/47 |
+| 07 | intensity2 industry=1 | 1977–2024 | 0.998923 | 0.001086 | 0/48 |
+| 07 | intensity2 industry=2 | 1977–2024 | 0.995360 | 0.001491 | 1/48 |
+| 07 | intensity2 industry=3 | 1977–2024 | 0.997830 | 0.001677 | 1/48 |
+| 07 | intensity2 industry=4 | 1977–2024 | 0.994216 | 0.002062 | 1/48 |
 | 07 | intensity2 industry=6 | 1977–2024 | 0.999937 | 0.000653 | 0/48 |
-| 08 | mb_win | 1977–2017 | 0.998443 | 0.032053 | 6/41 |
-| 08 | epw | 1977–2017 | 0.996010 | 0.018861 | 3/41 |
-| 09 | roe_inc2 | 1978–2023 | 0.922594 | 0.012390 | 13/46 |
-| 09 | roe_inc_epw2 | 1978–2023 | 0.883872 | 0.006290 | 10/46 |
-| 09 | diffUnadj | 1978–2023 | 0.896095 | 0.009077 | 30/46 |
+| 08 | mb_win | 1977–2017 | 0.998415 | 0.031803 | 6/41 |
+| 08 | epw | 1977–2017 | 0.996022 | 0.018826 | 3/41 |
+| 09 | roe_inc2 | 1978–2023 | 0.866063 | 0.013304 | 18/46 |
+| 09 | roe_inc_epw2 | 1978–2023 | 0.964374 | 0.004170 | 7/46 |
+| 09 | diffUnadj | 1978–2023 | 0.829687 | 0.011973 | 29/46 |
 
 ## Matched historical input audit
 
@@ -31,7 +31,7 @@ The same figure functions were also run on figure1data.dta plus the authors’ s
 
 The numerical Figure 8 reference ends in 2017; it does not certify later years in the PNG. Replaying the newer historical source inputs against that earlier stored intermediate is not an exact same-input comparison. On common firm-years, the raw market-to-book MAE is 0.004266 and the stored winsorized MAE is 0.033191. This discrepancy predates the current Compustat rebuild and cannot be labeled a port error or dismissed as zero.
 
-S&P membership spells actually end on 2019-12-31. Flags afterward are artifacts of the preserved Stata multi-spell expansion. Current and author membership counts by year are recorded in diagnostics.json. The current fiscal-year tail contains 33 raw observations, so it is incomplete.
+S&P membership spells actually end on 2026-06-30. Flags afterward are artifacts of the preserved Stata multi-spell expansion. Current and author membership counts by year are recorded in diagnostics.json. The current fiscal-year tail contains 392 raw observations, so it is incomplete.
 
 ## Fidelity and deviations
 
@@ -63,14 +63,14 @@ The final deal keys were found in the authors’ local estimation file and stage
 
 ```json
 {
-  "rows": 599379,
+  "rows": 600028,
   "first_year": 1950,
   "latest_year": 2026,
-  "market_rows": 358288,
-  "stock_rows": 359692,
+  "market_rows": 358714,
+  "stock_rows": 359683,
   "target_rows": 51,
   "acquirer_rows": 1391,
-  "sp500_last_year": 2025
+  "sp500_last_year": 2026
 }
 ```
 
@@ -108,9 +108,9 @@ Current reconstructed CCM map versus the authors’ dated map (different input v
 ```
 
 Numerical regression checks passed for calendar gaps, pooled clipping, depreciation across gaps, intensity timing, missing numerator handling and membership-screen timing. Re-run with `python3 site/figures/check_ports.py`.
-- Figure 1: exported 1977–2026; last nonmissing plotted year 2025.
+- Figure 1: exported 1977–2026; last nonmissing plotted year 2026.
 - Figure 7: exported 1977–2025; last nonmissing plotted year 2025.
-- Figure 8: exported 1977–2025; last nonmissing plotted year 2025.
+- Figure 8: exported 1977–2026; last nonmissing plotted year 2026.
 - Figure 9: exported 1977–2025; last nonmissing plotted year 2025.
 
 ## Visual review

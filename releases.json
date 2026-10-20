@@ -17,6 +17,15 @@
       "fyear_min": 1975,
       "fyear_max": 2026,
       "rows": 534089
+    },
+    {
+      "tag": "20261019",
+      "date": "2026-10-19",
+      "file": "intangibleCapital_20261019.csv",
+      "compustat_asof": "2026-09-30",
+      "fyear_min": 1975,
+      "fyear_max": 2026,
+      "rows": 534738
     }
   ]
 }

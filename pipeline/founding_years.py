@@ -57,9 +57,9 @@ def build(bridge_kind="crsp_cs", asof_year=2026, verbose=True):
     exact, fallback, n_ambig = load_bridge(bridge_kind, asof_year)
     stats = {"ambiguous_permnos_excluded": n_ambig}
 
-    # --- A: Ritter IPO-age.xlsx (2022 list)
+    # --- A: Ritter IPO-age.xlsx (January 2026 list; "CRSP Perm" was "CRSP perm" before)
     a = pd.read_excel(FIN / "IPO-age.xlsx")
-    a = a.rename(columns={"CRSP perm": "permno", "Founding": "foundingyear", "offer date": "offerdate", "VC": "new_vc"})
+    a = a.rename(columns={"CRSP perm": "permno", "CRSP Perm": "permno", "Founding": "foundingyear", "offer date": "offerdate", "VC": "new_vc"})
     a = a[["permno", "foundingyear", "offerdate", "new_vc"]].copy()
     a["new_vc"] = pd.to_numeric(a.new_vc, errors="coerce")
     a["foundingyear"] = pd.to_numeric(a.foundingyear, errors="coerce")

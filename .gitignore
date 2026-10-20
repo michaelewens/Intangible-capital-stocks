@@ -7,3 +7,4 @@ site/figures/__pycache__/
 python/dist/
 python/build/
 python/*.egg-info/
+analysis/

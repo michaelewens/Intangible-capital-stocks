@@ -35,7 +35,7 @@ Estimates (Oct. 2023) with bootstrapped standard errors:
 ## Stocks for Compustat firms
 
 <!-- release:begin -->
-Current release: [`intangibleCapital_20260924.csv`](intangibleCapital_20260924.csv). One row per Compustat firm and fiscal year, 534,089 firm-years, 46,082 firms, fiscal years 1975 to 2026, built from Compustat as of June 30, 2026.
+Current release: [`intangibleCapital_20261019.csv`](intangibleCapital_20261019.csv). One row per Compustat firm and fiscal year, 534,738 firm-years, 46,125 firms, fiscal years 1975 to 2026, built from Compustat as of September 30, 2026.
 <!-- release:end --> Columns:
 
 * `gvkey`: the Compustat unique identifier
@@ -48,11 +48,11 @@ All dollars are nominal, in Compustat units (millions). The stocks are _net_ ass
 
 To load in Stata:
 
-`import delimited "https://github.com/michaelewens/Intangible-capital-stocks/raw/master/intangibleCapital_20260924.csv", clear`
+`import delimited "https://github.com/michaelewens/Intangible-capital-stocks/raw/master/intangibleCapital_20261019.csv", clear`
 
 In Python:
 
-`pd.read_csv("https://github.com/michaelewens/Intangible-capital-stocks/raw/master/intangibleCapital_20260924.csv")`
+`pd.read_csv("https://github.com/michaelewens/Intangible-capital-stocks/raw/master/intangibleCapital_20261019.csv")`
 
 The previous release, [`intangibleCapital_090123.dta`](intangibleCapital_090123.dta) (fiscal 1975 to 2019, September 2023), is kept for replication of work that used it.
 

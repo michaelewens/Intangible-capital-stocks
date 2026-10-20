@@ -15,7 +15,7 @@ SITE = ROOT / "site"
 DIST = SITE / "dist"
 REPO_RAW = "https://github.com/michaelewens/Intangible-capital-stocks/raw/master/"
 REPO = "https://github.com/michaelewens/Intangible-capital-stocks"
-RELEASE = "intangibleCapital_20260924"          # updated by the release script
+RELEASE = "intangibleCapital_20261019"          # updated by the release script
 PARAMS = "capital_accum_parameters_2023.csv"
 
 
