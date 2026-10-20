@@ -43,12 +43,13 @@ def preflight(allow_stale):
     con = duckdb.connect(str(SNAPSHOT), read_only=True)
     pulled = con.sql("select max(pulled_at) from _meta").fetchone()[0]
     asof = con.sql("select max(datadate) from funda").fetchone()[0]
+    crsp_asof = con.sql("select max(mthcaldt) from msf").fetchone()[0]
     con.close()
     age = (datetime.now(pulled.tzinfo) - pulled).days
-    print(f"  snapshot pulled {pulled.date()} ({age} days ago), funda datadate through {asof}")
+    print(f"  snapshot pulled {pulled.date()} ({age} days ago), funda datadate through {asof}, CRSP monthly through {crsp_asof}")
     if age > MAX_SNAPSHOT_AGE_DAYS and not allow_stale:
         sys.exit(f"snapshot is {age} days old; refresh it first (see docstring) or pass --allow-stale")
-    return str(asof)
+    return str(asof)[:10], str(crsp_asof)[:10]
 
 
 def compare(new_csv, old_file):
@@ -72,9 +73,10 @@ def compare(new_csv, old_file):
 def update_text_files(tag, facts, cmp, prev):
     step("update releases.json, README.md, RELEASES.md, site/build.py")
     man_p = ROOT / "releases.json"; man = json.load(open(man_p))
-    entry = {"tag": tag, "date": facts["date"], "file": facts["file"], "compustat_asof": facts["asof"],
-             "fyear_min": facts["fy_min"], "fyear_max": facts["fy_max"], "rows": facts["rows"]}
-    man["releases"] = [r for r in man["releases"] if r["tag"] != tag] + [entry]
+    old = next((r for r in man["releases"] if r["tag"] == tag), {})   # a rerun keeps fields added by hand
+    entry = {**old, "tag": tag, "date": facts["date"], "file": facts["file"], "compustat_asof": facts["asof"],
+             "crsp_asof": facts["crsp_asof"], "fyear_min": facts["fy_min"], "fyear_max": facts["fy_max"], "rows": facts["rows"]}
+    man["releases"] = sorted([r for r in man["releases"] if r["tag"] != tag] + [entry], key=lambda r: r["date"])
     json.dump(man, open(man_p, "w"), indent=2); print("  releases.json updated")
 
     # README: the block between the markers is regenerated
@@ -117,7 +119,7 @@ def main():
     a = ap.parse_args()
     tag = a.tag; out_file = f"intangibleCapital_{tag}.csv"
 
-    asof = preflight(a.allow_stale)
+    asof, crsp_asof = preflight(a.allow_stale)
     step("pull inputs from the local snapshot and FRED"); run([PY, "pipeline/pull_inputs_local.py"])
     step("founding and IPO years"); run([PY, "pipeline/founding_years.py", "--bridge", "ccmlink"])
     step("build the stocks"); run([PY, "pipeline/epw_stocks.py", "--tag", tag, "--keep-panel"])
@@ -127,7 +129,7 @@ def main():
     df["gvkey"] = df.gvkey.astype(int); df["fyear"] = df.fyear.astype(int); df["note"] = df.note.fillna("")
     df.to_csv(ROOT / out_file, index=False)
     d = date(int(tag[:4]), int(tag[4:6]), int(tag[6:]))
-    facts = {"file": out_file, "date": d.isoformat(), "asof": asof, "asof_long": datetime.fromisoformat(asof).strftime("%B %-d, %Y"),
+    facts = {"file": out_file, "date": d.isoformat(), "asof": asof, "crsp_asof": crsp_asof, "asof_long": datetime.fromisoformat(asof).strftime("%B %-d, %Y"),
              "rows": int(len(df)), "firms": int(df.gvkey.nunique()), "fy_min": int(df.fyear.min()), "fy_max": int(df.fyear.max())}
     print("  " + json.dumps(facts))
 

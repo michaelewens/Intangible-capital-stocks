@@ -1,5 +1,5 @@
 """Figure 8: market equity / assets, with and without EPW stocks."""
-from sample import market_view, ratio, winsor
+from sample import market_view, ratio, winsor, full_years
 from common import plt, save, fit, cli
 
 
@@ -9,7 +9,7 @@ def compute(sample):
     # The unadjusted winsorization already occurred BEFORE the year screen.
     if 'mb_epw_win2' not in d:
         d['mb_epw_win2']=winsor(ratio(d.mkvalt,d.S2+d.G2+d['at']),.025)
-    return d.groupby('fyear')[['mb_win','mb_epw_win2']].mean().rename(columns={'mb_epw_win2':'epw'}).reset_index()
+    return full_years(d.groupby('fyear')[['mb_win','mb_epw_win2']].mean().rename(columns={'mb_epw_win2':'epw'}).reset_index(),sample)
 
 
 def plot(df,out_svg):

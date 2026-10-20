@@ -1,5 +1,5 @@
 """Figure 9: S&P membership-year ROE with sample lag and tax adjustment."""
-from sample import market_view, lag, ratio, winsor
+from sample import market_view, lag, ratio, winsor, full_years
 from common import plt, save, fit, cli
 
 
@@ -23,7 +23,7 @@ def compute(sample):
     d['roe_inc_epw2']=winsor(ratio(d.ni_adj_epw,lag(d,'equity_epw')),.01)
     # Mean paired difference is NOT the difference of the two marginal means.
     d['diffUnadj']=d.roe_inc2-d.roe_inc_epw2
-    return d.groupby('fyear')[['roe_inc2','roe_inc_epw2','diffUnadj']].mean().reset_index()
+    return full_years(d.groupby('fyear')[['roe_inc2','roe_inc_epw2','diffUnadj']].mean().reset_index(),sample)
 
 
 def plot(df,out_svg):

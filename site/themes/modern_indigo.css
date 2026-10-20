@@ -39,3 +39,6 @@
   .readme img { max-width: 100%; }
   .readme h2 { font-size: 1.15rem; margin-top: 28px; }
   footer { color: var(--muted); font-size: 0.86rem; margin-top: 56px; border-top: 1px solid var(--line); padding-top: 14px; }
+  p.updated { margin: 20px 0 0; padding: 8px 12px; font-size: 0.85rem; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; }
+  p.updated a { color: inherit; }
+  p.note { font-size: 0.9rem; color: var(--muted); margin: 0 0 16px; }

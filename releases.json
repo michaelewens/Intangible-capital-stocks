@@ -16,7 +16,8 @@
       "compustat_asof": "2026-06-30",
       "fyear_min": 1975,
       "fyear_max": 2026,
-      "rows": 534089
+      "rows": 534089,
+      "crsp_asof": "2025-12-31"
     },
     {
       "tag": "20261019",
@@ -25,7 +26,8 @@
       "compustat_asof": "2026-09-30",
       "fyear_min": 1975,
       "fyear_max": 2026,
-      "rows": 534738
+      "rows": 534738,
+      "crsp_asof": "2026-06-30"
     }
   ]
 }

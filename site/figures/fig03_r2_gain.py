@@ -5,6 +5,7 @@ and on log(knowCapital + orgCapital + at + .01); the series is the difference in
 Screens as in the Stata: market cap >= $5M, firm-years in the paper's estimation sample excluded."""
 import numpy as np, pandas as pd
 from _common import load_sample, save, new_fig
+from sample import full_years
 
 
 def _r2(y, x):
@@ -28,7 +29,7 @@ def compute(s):
         if len(g) < 100: continue
         r_book = _r2(g.logEV.to_numpy(), g.logBook.to_numpy()); r_int = _r2(g.logEV.to_numpy(), g.logBookIntan.to_numpy())
         rows.append({"fyear": int(y), "n_firms": len(g), "r2_book": r_book, "r2_book_plus_intangibles": r_int, "r2_gain": r_int - r_book})
-    return pd.DataFrame(rows)
+    return full_years(pd.DataFrame(rows), s)
 
 
 def plot(df):

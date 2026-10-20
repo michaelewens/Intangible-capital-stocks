@@ -1,5 +1,5 @@
 """Figure 1: pooled upper-tail winsorized investment / lagged assets."""
-from sample import lag, ratio, winsor
+from sample import lag, ratio, winsor, full_years
 from common import plt, save, cli
 
 
@@ -12,7 +12,7 @@ def compute(sample):
         d[dest]=ratio(d[src],denom)
         d.loc[d[src].isna()&last.notna(),dest]=0
         d[dest]=winsor(d[dest],.01,highonly=True)
-    return d[d.fyear>=1977].groupby('fyear')[['rdAssets','capxAssets','sgaAssets']].mean().reset_index()
+    return full_years(d[d.fyear>=1977].groupby('fyear')[['rdAssets','capxAssets','sgaAssets']].mean().reset_index(),sample)
 
 
 def plot(df,out_svg):

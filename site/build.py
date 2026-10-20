@@ -19,10 +19,25 @@ RELEASE = "intangibleCapital_20261019"          # updated by the release script
 PARAMS = "capital_accum_parameters_2023.csv"
 
 
+def long_date(iso):
+    return date.fromisoformat(iso[:10]).strftime("%B %-d, %Y")
+
+
+def updated_bar():
+    """One line under the menu: release date and data coverage, from this release's releases.json entry."""
+    entry = next(r for r in json.load(open(ROOT / "releases.json"))["releases"] if r["tag"] == RELEASE[-8:])
+    parts = [f"Last updated {long_date(entry['date'])}"]
+    if entry.get("compustat_asof"): parts.append(f"Compustat through {long_date(entry['compustat_asof'])}")
+    if entry.get("crsp_asof"): parts.append(f"CRSP through {long_date(entry['crsp_asof'])}")
+    parts.append(f'<a href="{REPO}/blob/master/RELEASES.md">Release notes</a>')
+    return '<p class="updated">' + " &middot; ".join(parts) + "</p>"
+
+
 def release_facts():
     df = pd.read_csv(ROOT / f"{RELEASE}.csv")
     d = date(int(RELEASE[-8:-4]), int(RELEASE[-4:-2]), int(RELEASE[-2:]))
     return {
+        "updated_bar": updated_bar(),
         "release_tag": RELEASE, "release_short": RELEASE[-8:], "release_date": d.strftime("%B %-d, %Y"),
         "n_rows": f"{len(df):,}", "n_firms": f"{df.gvkey.nunique():,}",
         "fy_min": int(df.fyear.min()), "fy_max": int(df.fyear.max()),
@@ -103,6 +118,17 @@ def md_to_html(md: str, base_blob: str, base_raw: str) -> str:
     return "\n".join(out)
 
 
+def figures_note():
+    """Says where the figures stop when the newest fiscal year is partial (site/figures/sample.py writes the counts)."""
+    p = ROOT / "data" / "figures_work" / "sample.json"
+    if not p.exists(): return ""
+    s = json.load(open(p))
+    if s.get("last_full_year") is None or s["latest_year"] <= s["last_full_year"]: return ""
+    return (f'<p class="note">Figures run through fiscal {s["last_full_year"]}, the last full fiscal year in Compustat. '
+            f'Fiscal {s["latest_year"]} so far covers {s["latest_year_firms"]:,} firms, the early filers, so the figures leave it out; '
+            f'the data file includes it.</p>')
+
+
 def figures_html():
     spec = json.load(open(SITE / "figures.json"))
     out = []
@@ -134,7 +160,7 @@ def main(theme="modern_indigo", out_name="index.html"):
     # the previous-release (.dta) paragraph stays in the repo README but not on the page
     readme_md = "\n".join(l for l in (ROOT / "README.md").read_text().split("\n") if not l.startswith("The previous release,"))
     readme = md_to_html(readme_md, REPO + "/blob/master/", REPO_RAW)
-    html = html.replace("{{readme}}", readme).replace("{{params_rows}}", params_table()).replace("{{figures}}", figures_html()).replace("{{prompt}}", prompt.replace("<", "&lt;"))
+    html = html.replace("{{readme}}", readme).replace("{{params_rows}}", params_table()).replace("{{figures}}", figures_html()).replace("{{figures_note}}", figures_note()).replace("{{prompt}}", prompt.replace("<", "&lt;"))
     (DIST / out_name).write_text(html)
     print("built", DIST / out_name, "theme", theme)
 

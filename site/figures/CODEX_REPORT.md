@@ -6,11 +6,11 @@ Shared panel: 600,028 firm-years; latest fiscal year 2026. Results below were co
 |---|---|---|---:|---:|---:|
 | 01 | rdAssets | 1977–2023 | 0.999994 | 0.000268 | 0/47 |
 | 01 | capxAssets | 1977–2023 | 0.999975 | 0.000187 | 0/47 |
-| 07 | intensity2 industry=1 | 1977–2024 | 0.998893 | 0.001080 | 0/48 |
-| 07 | intensity2 industry=2 | 1977–2024 | 0.995738 | 0.001459 | 1/48 |
-| 07 | intensity2 industry=3 | 1977–2024 | 0.997811 | 0.001681 | 1/48 |
-| 07 | intensity2 industry=4 | 1977–2024 | 0.994194 | 0.002071 | 1/48 |
-| 07 | intensity2 industry=6 | 1977–2024 | 0.999934 | 0.000625 | 0/48 |
+| 07 | intensity2 industry=1 | 1977–2023 | 0.999941 | 0.000684 | 0/47 |
+| 07 | intensity2 industry=2 | 1977–2023 | 0.999857 | 0.000788 | 0/47 |
+| 07 | intensity2 industry=3 | 1977–2023 | 0.999973 | 0.000892 | 0/47 |
+| 07 | intensity2 industry=4 | 1977–2023 | 0.999966 | 0.000770 | 0/47 |
+| 07 | intensity2 industry=6 | 1977–2023 | 0.999992 | 0.000470 | 0/47 |
 | 08 | mb_win | 1977–2017 | 0.998415 | 0.031803 | 6/41 |
 | 08 | epw | 1977–2017 | 0.995994 | 0.018973 | 3/41 |
 | 09 | roe_inc2 | 1978–2023 | 0.867114 | 0.013458 | 18/46 |
@@ -70,7 +70,10 @@ The final deal keys were found in the authors’ local estimation file and stage
   "stock_rows": 360118,
   "target_rows": 51,
   "acquirer_rows": 1391,
-  "sp500_last_year": 2026
+  "sp500_last_year": 2026,
+  "last_full_year": 2025,
+  "last_full_year_firms": 13450,
+  "latest_year_firms": 392
 }
 ```
 
@@ -108,10 +111,10 @@ Current reconstructed CCM map versus the authors’ dated map (different input v
 ```
 
 Numerical regression checks passed for calendar gaps, pooled clipping, depreciation across gaps, intensity timing, missing numerator handling and membership-screen timing. Re-run with `python3 site/figures/check_ports.py`.
-- Figure 1: exported 1977–2026; last nonmissing plotted year 2026.
-- Figure 7: exported 1977–2026; last nonmissing plotted year 2026.
-- Figure 8: exported 1977–2026; last nonmissing plotted year 2026.
-- Figure 9: exported 1977–2026; last nonmissing plotted year 2026.
+- Figure 1: exported 1977–2025; last nonmissing plotted year 2025.
+- Figure 7: exported 1977–2025; last nonmissing plotted year 2025.
+- Figure 8: exported 1977–2025; last nonmissing plotted year 2025.
+- Figure 9: exported 1977–2025; last nonmissing plotted year 2025.
 
 ## Visual review
 

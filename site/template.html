@@ -26,6 +26,7 @@
   <a href="{{repo}}">GitHub</a>
 </div></nav>
 <main id="top">
+  {{updated_bar}}
   <h1>Intangible Capital Data</h1>
   <p class="sub">Knowledge and organization capital stocks for U.S. public firms, built from Compustat with the parameter estimates of Ewens, Peters and Wang (2024), <em>Management Science</em>.</p>
 
@@ -74,6 +75,7 @@ merged = ic.merge_compustat(funda)    # your Compustat frame, stocks attached</p
   </section>
 
   <h2 id="figures">What the data show</h2>
+  {{figures_note}}
   <div class="grid">
   {{figures}}
   </div>

@@ -17,6 +17,25 @@ WORK = ROOT / 'data/figures_work'
 KEY = ['gvkey', 'fyear']
 
 
+PARTIAL_SHARE = 0.5   # a fiscal year with fewer firms than this share of the prior year is partial
+
+
+def last_full_year(sample):
+    """Latest fiscal year whose Compustat firm count is at least PARTIAL_SHARE of the prior year's.
+    Between releases the newest fiscal year holds only early filers; figures stop before it."""
+    n = sample.groupby('fyear').gvkey.nunique().sort_index()
+    y = int(n.index.max())
+    while (y - 1) in n.index and n[y] < PARTIAL_SHARE * n[y - 1]:
+        y -= 1
+    return y
+
+
+def full_years(df, sample):
+    """Drop partial fiscal years from a figure's output. Applied after all computation, so pooled
+    winsorization and other sample steps are unchanged."""
+    return df[df.fyear <= last_full_year(sample)].reset_index(drop=True)
+
+
 def ratio(a, b):
     return (a / b).replace([np.inf, -np.inf], np.nan)
 
@@ -223,6 +242,8 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     d.to_csv(a.out,index=False)
     summary={'rows':len(d),'first_year':int(d.fyear.min()),'latest_year':int(d.fyear.max()),'market_rows':int(d.market_sample.sum()),'stock_rows':int(d.stock_sample.sum()),'target_rows':int(d.targetYear.sum()),'acquirer_rows':int(d.acqYear.sum()),'sp500_last_year':int(d.loc[d.sp500.eq(1),'fyear'].max())}
+    n=d.groupby('fyear').gvkey.nunique(); lfy=last_full_year(d)
+    summary.update({'last_full_year':lfy,'last_full_year_firms':int(n[lfy]),'latest_year_firms':int(n[n.index.max()])})
     a.out.with_suffix('.json').write_text(json.dumps(summary,indent=2)+'\n')
     print(summary)
 

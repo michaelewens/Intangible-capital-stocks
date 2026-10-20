@@ -1,7 +1,7 @@
 """Figure 7: lagged total intangibles / lagged total capital."""
 import numpy as np
 import pandas as pd
-from sample import sic_keep
+from sample import sic_keep, full_years
 from common import plt, save, cli
 LABELS={1:'Consumer',2:'Manufacturing',3:'High-tech',4:'Healthcare',6:'All'}
 
@@ -24,7 +24,7 @@ def compute(sample):
     # All includes Other, although the Stata chart does not draw Other separately.
     all_=d.groupby('fyear')[['intensity2','intensity_net']].mean().reset_index().assign(industry5=6)
     out=pd.concat([industry[industry.industry5.isin([1,2,3,4])],all_]).sort_values(['industry5','fyear']).reset_index(drop=True)
-    return out.rename(columns={'intensity_net':'intensity_net_ppe'})   # intensity2 = the paper's gross-PP&E ratio
+    return full_years(out.rename(columns={'intensity_net':'intensity_net_ppe'}),sample)   # intensity2 = the paper's gross-PP&E ratio
 
 
 def plot(df,out_svg):

@@ -2,6 +2,7 @@
 nominal $ billions, across the figure sample (paper's screens). Not in the paper."""
 import numpy as np, pandas as pd
 from _common import load_sample, save, new_fig
+from sample import full_years
 
 
 def compute(s):
@@ -10,7 +11,7 @@ def compute(s):
     g = d.groupby("fyear")[["knowCapital_nom", "orgCapital_nom", "ppent_nom"]].sum() / 1000
     g.columns = ["knowledge_bn", "organization_bn", "ppent_bn"]
     g["n_firms"] = d.groupby("fyear").gvkey.nunique()
-    return g.reset_index()
+    return full_years(g.reset_index(), s)
 
 
 def plot(df):
