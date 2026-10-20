@@ -1,0 +1,225 @@
+#!/usr/bin/env python3
+"""Explain every large change between two releases, and stop the release if any change is unexplained.
+
+    python3 pipeline/change_check.py --old 20260924 --new 20261019
+
+Each release's exact stock-builder inputs are archived by release.py in ARCHIVE/<tag>/ (funda.csv,
+company.csv, ccmlink.csv, cpi.csv, ipo_year.csv; Compustat data, so never in this repository).
+
+1. Reproduction: epw_stocks.build() on each release's archived inputs must reproduce that release's
+   published file exactly (same firm-years, same missing values, same stocks, same note). Exit 1 if not.
+2. Swaps: starting from the old inputs, replace one input file at a time with its new version.
+3. Attribution, for firm-years in both releases:
+   - a stock that moved more than 5% goes to the swap with the largest effect, if that swap explains
+     at least half the change;
+   - a stock that became missing or nonmissing goes to the first swap that reproduces the new state.
+   Firm-years new or dropped before the latest fiscal year go to the first swap that adds or drops them.
+4. Writes REPORT.md and the row-level CSVs to --out. Exit 2 if anything is unexplained, unless
+   --allow-unexplained (use only after reading the report).
+"""
+import argparse, json, shutil, sys, tempfile
+from pathlib import Path
+import numpy as np, pandas as pd
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "pipeline"))
+import epw_stocks as es  # noqa: E402
+
+ARCHIVE = Path.home() / "Dropbox/projects/Research/Intangible Capital Data/release_inputs"
+REPORTS = Path.home() / "Dropbox/projects/Research/Intangible Capital Data/analysis"
+FILES = {"company.csv": "Header SIC / industry", "funda.csv": "Compustat items (funda)",
+         "ccmlink.csv": "CCM link (permno)", "cpi.csv": "CPI deflator",
+         "ipo_year.csv": "Founding/IPO years (Ritter file and CCM bridge)"}
+STOCKS = ["knowCapital", "orgCapital"]
+ITEMS = ["xrd", "xsga", "rdip", "cogs", "at", "prcc_f"]
+KEY = ["gvkey", "fyear"]
+
+
+def asof_year(tag):
+    return int(tag[:4])
+
+
+def build(files, year, scratch):
+    """Run the stock builder on a dict {filename: path}. Returns gvkey, fyear, stocks, note."""
+    d = Path(tempfile.mkdtemp(dir=scratch))
+    for f, p in files.items():
+        (d / f).symlink_to(p)
+    es.IPO_YEAR = d / "ipo_year.csv"
+    out = es.build(year, verbose=False, inputs=d)[0]
+    out = out[KEY + STOCKS + ["note"]].copy()
+    out["gvkey"] = out.gvkey.astype(int); out["fyear"] = out.fyear.astype(int); out["note"] = out.note.fillna("")
+    return out.sort_values(KEY).reset_index(drop=True)
+
+
+def published(tag):
+    p = pd.read_csv(ROOT / f"intangibleCapital_{tag}.csv")
+    p["gvkey"] = p.gvkey.astype(int); p["fyear"] = p.fyear.astype(int); p["note"] = p.note.fillna("")
+    return p.sort_values(KEY).reset_index(drop=True)
+
+
+def reproduce(built, pub):
+    """List of problems; empty means the rebuild matches the published file exactly."""
+    probs = []
+    if built.duplicated(KEY).any() or pub.duplicated(KEY).any():
+        probs.append("duplicate firm-years")
+    m = pub.merge(built, on=KEY, how="outer", suffixes=("_pub", "_built"), indicator=True)
+    for side, label in (("left_only", "only in the published file"), ("right_only", "only in the rebuild")):
+        if (n := int((m._merge == side).sum())):
+            probs.append(f"{n} firm-years {label}")
+    b = m[m._merge == "both"]
+    for v in STOCKS:
+        a, c = b[f"{v}_pub"].to_numpy(float), b[f"{v}_built"].to_numpy(float)
+        if (n := int((np.isnan(a) != np.isnan(c)).sum())):
+            probs.append(f"{v}: {n} firm-years missing in one file only")
+        ok = np.isnan(a) | np.isnan(c) | np.isclose(a, c, rtol=1e-9, atol=1e-9)
+        if (n := int((~ok).sum())):
+            probs.append(f"{v}: {n} values differ")
+    if (n := int((b.note_pub != b.note_built).sum())):
+        probs.append(f"note: {n} firm-years differ")
+    return probs
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--old", required=True); ap.add_argument("--new", required=True)
+    ap.add_argument("--archive", type=Path, default=ARCHIVE)
+    ap.add_argument("--out", type=Path, help="report folder (default: the project's analysis/<new>_changes)")
+    ap.add_argument("--allow-unexplained", action="store_true")
+    a = ap.parse_args()
+    out = a.out or REPORTS / f"{a.new}_changes"; out.mkdir(parents=True, exist_ok=True)
+    old_in, new_in = a.archive / a.old, a.archive / a.new
+    for d in (old_in, new_in):
+        missing = [f for f in FILES if not (d / f).exists()]
+        if missing:
+            sys.exit(f"change check: {d} is missing {missing}; archived inputs are needed for both releases")
+    scratch = Path(tempfile.mkdtemp(prefix="change_check_"))
+    L = [f"# Changes from release {a.old} to {a.new}\n",
+         f"Generated by `pipeline/change_check.py`. Inputs: `{old_in}` and `{new_in}`.\n"]
+
+    # 1. reproduction
+    po, pn = published(a.old), published(a.new)
+    ro = build({f: old_in / f for f in FILES}, asof_year(a.old), scratch)
+    rn = build({f: new_in / f for f in FILES}, asof_year(a.new), scratch)
+    probs = {a.old: reproduce(ro, po), a.new: reproduce(rn, pn)}
+    L.append("## Reproduction\n")
+    for t, p in probs.items():
+        L.append(f"- {t}: " + ("rebuild matches the published file exactly (firm-years, missing values, stocks, note)." if not p else "FAILED: " + "; ".join(p)))
+    L.append("")
+    if any(probs.values()):
+        (out / "REPORT.md").write_text("\n".join(L) + "\n")
+        print("\n".join(L)); sys.exit(1)
+
+    # 2. one-input swaps, from the old inputs; the build year follows the old release
+    runs = {}
+    for f in FILES:
+        files = {g: old_in / g for g in FILES}; files[f] = new_in / f
+        runs[f] = build(files, asof_year(a.old), scratch)
+    if asof_year(a.old) != asof_year(a.new):
+        FILES_ = dict(FILES, asof="Build year"); runs["asof"] = build({f: old_in / f for f in FILES}, asof_year(a.new), scratch)
+    else:
+        FILES_ = FILES
+
+    # 3a. stocks that moved more than 5%, and missingness changes, on shared firm-years
+    base = po.merge(pn[KEY + STOCKS], on=KEY, suffixes=("_old", "_new"))
+    for s, r in runs.items():
+        base = base.merge(r[KEY + STOCKS].rename(columns={v: f"{v}_{s}" for v in STOCKS}), on=KEY, how="left")
+    rows = []
+    for v in STOCKS:
+        o, n = base[f"{v}_old"], base[f"{v}_new"]
+        rel = (n - o) / o.abs()
+        moved = (o.notna() & n.notna() & (rel.abs() > 0.05)) | (o.eq(0) & n.notna() & n.ne(0))
+        sub = base[moved].copy()
+        if len(sub):
+            D = (sub[f"{v}_new"] - sub[f"{v}_old"]).to_numpy()
+            eff = pd.DataFrame({s: sub[f"{v}_{s}"] - sub[f"{v}_old"] for s in runs}).fillna(0)
+            best = eff.abs().idxmax(axis=1)
+            share = np.array([eff.at[i, b] for i, b in zip(eff.index, best)]) / D
+            rows.append(pd.DataFrame({"stock": v, "kind": "moved more than 5%", "gvkey": sub.gvkey, "fyear": sub.fyear,
+                                      "old": sub[f"{v}_old"], "new": sub[f"{v}_new"], "rel_change": rel[moved],
+                                      "input": best.map(FILES_), "share": share,
+                                      "explained": share >= 0.5}))
+        flip = o.isna() != n.isna()
+        sub = base[flip]
+        if len(sub):
+            hit = pd.DataFrame({s: sub[f"{v}_{s}"].isna() == sub[f"{v}_new"].isna() for s in runs})
+            first = hit.idxmax(axis=1).where(hit.any(axis=1))
+            rows.append(pd.DataFrame({"stock": v, "kind": "became " + np.where(sub[f"{v}_new"].isna(), "missing", "nonmissing"),
+                                      "gvkey": sub.gvkey, "fyear": sub.fyear, "old": sub[f"{v}_old"], "new": sub[f"{v}_new"],
+                                      "rel_change": np.nan, "input": first.map(FILES_), "share": np.nan,
+                                      "explained": first.notna()}))
+    ch = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame(
+        columns=["stock", "kind", "gvkey", "fyear", "old", "new", "rel_change", "input", "share", "explained"])
+
+    # 3b. firm-years new or dropped before the new release's latest fiscal year
+    latest = int(pn.fyear.max())
+    ko, kn = set(zip(po.gvkey, po.fyear)), set(zip(pn.gvkey, pn.fyear))
+    present = {s: set(zip(r.gvkey, r.fyear)) for s, r in runs.items()}
+    nd = []
+    for kind, keys in (("new", kn - ko), ("dropped", ko - kn)):
+        for g, y in sorted(keys):
+            if y >= latest:
+                continue
+            hits = [s for s in runs if ((g, y) in present[s]) == (kind == "new")]
+            nd.append({"kind": kind, "gvkey": g, "fyear": y, "input": FILES_[hits[0]] if hits else np.nan, "explained": bool(hits)})
+    nd = pd.DataFrame(nd, columns=["kind", "gvkey", "fyear", "input", "explained"])
+
+    # details for the explained rows: what changed in that input for that firm
+    def tab(p, cols):
+        return pd.read_csv(p, usecols=cols).drop_duplicates("gvkey").set_index("gvkey")
+    sic_o, sic_n = tab(old_in / "company.csv", ["gvkey", "sic"]).sic, tab(new_in / "company.csv", ["gvkey", "sic"]).sic
+    ipo_o, ipo_n = (tab(d / "ipo_year.csv", ["gvkey", "foundingyear", "ipo_year"]) for d in (old_in, new_in))
+    fo = pd.read_csv(old_in / "funda.csv", usecols=KEY + ITEMS); fn = pd.read_csv(new_in / "funda.csv", usecols=KEY + ITEMS)
+    fu = fo.merge(fn, on=KEY, how="outer", suffixes=("_o", "_n"), indicator=True)
+    fmt = lambda x: "missing" if pd.isna(x) else str(int(x))
+    def detail(r):
+        g = r.gvkey
+        if r.input == FILES["company.csv"]:
+            return f"SIC {fmt(sic_o.get(g))} -> {fmt(sic_n.get(g))}"
+        if r.input == FILES["ipo_year.csv"]:
+            a = ipo_o.reindex([g]).iloc[0]; b = ipo_n.reindex([g]).iloc[0]
+            return f"founding year {fmt(a.foundingyear)} -> {fmt(b.foundingyear)}; IPO year {fmt(a.ipo_year)} -> {fmt(b.ipo_year)}"
+        if r.input == FILES["funda.csv"]:
+            d = fu[fu.gvkey == g]; both = d[d._merge == "both"]; parts = []
+            for it in ITEMS:
+                x, y = both[f"{it}_o"].to_numpy(float), both[f"{it}_n"].to_numpy(float)
+                yrs = both.fyear[~((np.isnan(x) & np.isnan(y)) | np.isclose(x, y, rtol=1e-6))].astype(int).tolist()
+                if yrs: parts.append(f"{it} changed in {', '.join(map(str, yrs[:5]))}{' ...' if len(yrs) > 5 else ''}")
+            for side, lab in (("right_only", "years added"), ("left_only", "years removed")):
+                yrs = d.fyear[d._merge == side].astype(int).tolist()
+                if yrs: parts.append(f"{lab} {', '.join(map(str, yrs[:5]))}")
+            return "; ".join(parts) or "no item differences"
+        return ""
+    for df in (ch, nd):
+        df["detail"] = [detail(r) if r.explained else "" for r in df.itertuples()]
+    ch.to_csv(out / "changed_firmyears.csv", index=False); nd.to_csv(out / "new_dropped_firmyears.csv", index=False)
+
+    # 4. report
+    def counts(df):
+        if df.empty: return ["None.", ""]
+        t = (df.assign(input=df.input.fillna("UNEXPLAINED")).groupby("input")
+             .agg(firm_years=("gvkey", "size"), firms=("gvkey", "nunique")).sort_values("firm_years", ascending=False))
+        return ["| Input | Firm-years | Firms |", "|---|---|---|"] + [f"| {i} | {r.firm_years} | {r.firms} |" for i, r in t.iterrows()] + [""]
+    L.append("## Swaps\n\nEach swap starts from the old inputs and replaces one file with its new version. A stock that moved more than 5% is credited to the swap with the largest effect when that swap explains at least half the change.\n")
+    for v in STOCKS:
+        s = ch[ch.stock == v]
+        L += [f"## {v}: moved more than 5%\n"] + counts(s[s.kind == "moved more than 5%"])
+        L += [f"## {v}: became missing or nonmissing\n"] + counts(s[s.kind != "moved more than 5%"])
+        big = s[s.kind == "moved more than 5%"].reindex(s.rel_change.abs().sort_values(ascending=False).index).head(10)
+        if len(big):
+            L += [f"Largest {v} moves:\n", "| gvkey | fyear | old | new | change | input | detail |", "|---|---|---|---|---|---|---|"]
+            L += [f"| {r.gvkey} | {r.fyear} | {r.old:,.1f} | {r.new:,.1f} | {r.rel_change:+.1%} | {r.input} | {r.detail} |" for r in big.itertuples()] + [""]
+    L += [f"## Firm-years new or dropped before fiscal {latest}\n"]
+    for k in ("new", "dropped"):
+        L += [f"{k.capitalize()}:\n"] + counts(nd[nd.kind == k])
+    unexplained = int((~ch.explained.astype(bool)).sum() + (~nd.explained.astype(bool)).sum())
+    L.append(f"## Result\n\n{unexplained} unexplained firm-years." + (" See the CSVs (explained = False)." if unexplained else ""))
+    (out / "REPORT.md").write_text("\n".join(L) + "\n")
+    shutil.rmtree(scratch, ignore_errors=True)
+    print(f"change check {a.old} -> {a.new}: reproduction ok; {len(ch)} changed stock firm-years, {len(nd)} new/dropped before {latest}; "
+          f"{unexplained} unexplained; report {out / 'REPORT.md'}")
+    if unexplained and not a.allow_unexplained:
+        sys.exit(2)
+
+
+if __name__ == "__main__":
+    main()

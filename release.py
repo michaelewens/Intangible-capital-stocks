@@ -4,17 +4,20 @@
     python3 release.py                 # build everything for today's tag, stop before publishing
     python3 release.py --publish       # ... then commit, push, deploy the site, create the GitHub release
     python3 release.py --tag 20261215  # explicit tag (YYYYMMDD)
-    python3 release.py --skip-figures  # data only
+    python3 release.py --skip-figures  # data only (not with --publish)
 
-Before running: refresh the local WRDS snapshot (needs a Duo approval, run it yourself):
-    ~/.venvs/wrds/bin/python ~/Dropbox/Research/wrds_ccm/build_wrds_ccm.py
+Before running: back up the local WRDS snapshot, then refresh it (needs a Duo approval, run it yourself):
+    caffeinate -is ~/.venvs/wrds/bin/python ~/Dropbox/Research/wrds_ccm/build_wrds_ccm.py --force
 and have FRED_API_KEY in the environment (the CPI deflator comes from FRED).
 
-Steps: preflight -> pull inputs -> founding years -> stocks -> copy release file -> compare with the
-previous release -> update releases.json, README, RELEASES.md, site/build.py -> figures -> site build
--> (publish) commit, push, wrangler deploy, gh release.
+Steps: preflight -> pull inputs -> founding years -> stocks -> copy release file -> archive this release's
+inputs -> change check against the previous release (pipeline/change_check.py; stops the release on a
+failed reproduction or an unexplained change) -> compare -> update releases.json, README, RELEASES.md,
+site/build.py -> S&P 500 list -> figures -> diagnostics -> validation -> site build
+-> (publish) commit, push, wrangler deploy, gh release. --publish reruns every step, so the check
+always covers what is published.
 """
-import argparse, json, os, re, subprocess, sys
+import argparse, json, os, re, shutil, subprocess, sys
 from datetime import date, datetime
 from pathlib import Path
 import pandas as pd
@@ -23,6 +26,9 @@ ROOT = Path(__file__).resolve().parent
 PY = sys.executable
 SNAPSHOT = Path(os.environ.get("WRDS_CCM_DUCKDB", "/Users/me2731/Dropbox/Research/wrds_ccm/wrds_ccm.duckdb"))
 MAX_SNAPSHOT_AGE_DAYS = 45
+ARCHIVE = Path(os.environ.get("RELEASE_INPUTS", Path.home() / "Dropbox/projects/Research/Intangible Capital Data/release_inputs"))
+ARCHIVED = ["funda.csv", "company.csv", "ccmlink.csv", "cpi.csv", "ipo_year.csv"]   # everything epw_stocks.py reads
+SP500_DTA = ROOT / "data" / "inputs" / "figures" / "CRSPdsp500list.dta"
 FIGS = ["fig01_rd_capex", "fig02_stocks_vs_ppe", "fig03_r2_gain", "fig04_cross_section", "fig07_intensity", "fig08_mb", "fig09_roe"]
 
 
@@ -50,6 +56,20 @@ def preflight(allow_stale):
     if age > MAX_SNAPSHOT_AGE_DAYS and not allow_stale:
         sys.exit(f"snapshot is {age} days old; refresh it first (see docstring) or pass --allow-stale")
     return str(asof)[:10], str(crsp_asof)[:10]
+
+
+def sp500_list():
+    """S&P 500 membership spells for the ROE figure, from the snapshot's CRSP dsp500list_v2 (crspq)."""
+    import duckdb
+    con = duckdb.connect(str(SNAPSHOT), read_only=True)
+    v = con.sql("select permno, mbrstartdt, mbrenddt from dsp500list_v2").df()
+    con.close()
+    out = pd.DataFrame({"permno": v.permno.astype(float), "start": pd.to_datetime(v.mbrstartdt),
+                        "ending": pd.to_datetime(v.mbrenddt)}).sort_values(["permno", "start"])
+    if out.isna().any().any() or (out.ending < out.start).any():
+        sys.exit("S&P 500 list: missing or out-of-order membership dates in dsp500list_v2")
+    out.to_stata(SP500_DTA, write_index=False, convert_dates={"start": "td", "ending": "td"})
+    print(f"  {len(out):,} membership spells through {out.ending.max().date()}")
 
 
 def compare(new_csv, old_file):
@@ -116,13 +136,17 @@ def main():
     ap.add_argument("--publish", action="store_true", help="commit, push, deploy the site, create the GitHub release")
     ap.add_argument("--skip-figures", action="store_true")
     ap.add_argument("--allow-stale", action="store_true")
+    ap.add_argument("--allow-unexplained", action="store_true", help="publish despite unexplained changes (only after reading the change report)")
     a = ap.parse_args()
     tag = a.tag; out_file = f"intangibleCapital_{tag}.csv"
+    if a.publish and a.skip_figures:
+        sys.exit("--publish rebuilds and publishes the figures; it cannot be combined with --skip-figures")
 
     asof, crsp_asof = preflight(a.allow_stale)
     step("pull inputs from the local snapshot and FRED"); run([PY, "pipeline/pull_inputs_local.py"])
-    step("founding and IPO years"); run([PY, "pipeline/founding_years.py", "--bridge", "ccmlink"])
-    step("build the stocks"); run([PY, "pipeline/epw_stocks.py", "--tag", tag, "--keep-panel"])
+    year = tag[:4]   # founding years and stocks use the same as-of year
+    step("founding and IPO years"); run([PY, "pipeline/founding_years.py", "--bridge", "ccmlink", "--asof-year", year])
+    step("build the stocks"); run([PY, "pipeline/epw_stocks.py", "--tag", tag, "--keep-panel", "--asof-year", year])
 
     step("copy the release file")
     df = pd.read_csv(ROOT / "data" / "output" / f"intangibleCapital_{tag}.csv")
@@ -133,15 +157,26 @@ def main():
              "rows": int(len(df)), "firms": int(df.gvkey.nunique()), "fy_min": int(df.fyear.min()), "fy_max": int(df.fyear.max())}
     print("  " + json.dumps(facts))
 
-    step("compare with the previous release")
+    step("archive this release's inputs")
+    (ARCHIVE / tag).mkdir(parents=True, exist_ok=True)
+    for f in ARCHIVED: shutil.copy2(ROOT / "data" / "inputs" / f, ARCHIVE / tag / f)
+    print(f"  {ARCHIVE / tag}")
+
     man = json.load(open(ROOT / "releases.json"))
     prev = sorted([r for r in man["releases"] if r["tag"] != tag], key=lambda r: r["date"])[-1]
+    step(f"change check against {prev['tag']}")
+    run([PY, "pipeline/change_check.py", "--old", prev["tag"], "--new", tag] + (["--allow-unexplained"] if a.allow_unexplained else []))
+
+    step("compare with the previous release")
     cmp = compare(ROOT / out_file, ROOT / prev["file"]); print("  " + json.dumps(cmp))
     notes = update_text_files(tag, facts, cmp, prev)
 
     if not a.skip_figures:
+        step("S&P 500 list"); sp500_list()
         step("figures"); run([PY, "site/figures/sample.py", "--panel", f"data/output/panel_{tag}.csv"])
         for f in FIGS: run([PY, f"{f}.py"], cwd=ROOT / "site" / "figures")
+        step("figure diagnostics and validation")
+        run([PY, "site/figures/diagnose_validation.py"])
         run([PY, "site/figures/validate_figures.py"])
     step("site build"); run([PY, "site/build.py"])
 
@@ -153,8 +188,11 @@ def main():
     run(["git", "commit", "-m", f"Release {tag}\n\n{notes}\nDesigned by Michael Ewens. Built with release.py."])
     run(["git", "push", "origin", "master"])
     run(["wrangler", "deploy"], cwd=ROOT / "site")
-    run(["gh", "release", "create", f"v{tag}", "--title", f"Stocks release {tag}", "--notes", notes])
-    print(f"\nReleased {tag}: repo pushed, site deployed, GitHub release v{tag} created.")
+    if subprocess.run(["gh", "release", "view", f"v{tag}"], cwd=ROOT, capture_output=True).returncode == 0:
+        print(f"  GitHub release v{tag} already exists; not recreated")
+    else:
+        run(["gh", "release", "create", f"v{tag}", "--title", f"Stocks release {tag}", "--notes", notes])
+    print(f"\nReleased {tag}: repo pushed, site deployed, GitHub release v{tag} in place.")
 
 
 if __name__ == "__main__":
