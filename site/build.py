@@ -5,7 +5,7 @@ site/figures/out/figNN.svg (written by site/figures/*.py), site/template.html, s
 Writes: site/dist/index.html, site/dist/llms.txt, site/dist/prompt.txt, site/dist/figures/*.svg,
 site/dist/data/*.csv. No dependencies beyond pandas.
 """
-import json, shutil
+import json, re, shutil
 from datetime import date
 from pathlib import Path
 import pandas as pd
@@ -118,6 +118,16 @@ def md_to_html(md: str, base_blob: str, base_raw: str) -> str:
     return "\n".join(out)
 
 
+def check_page(html):
+    """Stop the build if template or Markdown plumbing leaks into the visible page."""
+    leaks = {"unfilled placeholder": r"\{\{\s*\w+\s*\}\}", "escaped HTML comment": r"&lt;!--|--&gt;",
+             "raw HTML comment in body": r"<body>.*<!--", "escaped tag": r"&lt;/?(?:p|a|div|br|code|strong|em)\b"}
+    found = [f"{name}: {m.group(0)[:60]!r}" for name, pat in leaks.items()
+             if (m := re.search(pat, html, flags=re.S))]
+    if found:
+        raise SystemExit("page check failed: " + "; ".join(found))
+
+
 def figures_note():
     """Says where the figures stop when the newest fiscal year is partial (site/figures/sample.py writes the counts)."""
     p = ROOT / "data" / "figures_work" / "sample.json"
@@ -159,8 +169,10 @@ def main(theme="modern_indigo", out_name="index.html"):
     for k, v in f.items(): html = html.replace("{{" + k + "}}", str(v))
     # the previous-release (.dta) paragraph stays in the repo README but not on the page
     readme_md = "\n".join(l for l in (ROOT / "README.md").read_text().split("\n") if not l.startswith("The previous release,"))
+    readme_md = re.sub(r"<!--.*?-->\s*", "", readme_md, flags=re.S)   # release.py's block markers are for the README only
     readme = md_to_html(readme_md, REPO + "/blob/master/", REPO_RAW)
     html = html.replace("{{readme}}", readme).replace("{{params_rows}}", params_table()).replace("{{figures}}", figures_html()).replace("{{figures_note}}", figures_note()).replace("{{prompt}}", prompt.replace("<", "&lt;"))
+    check_page(html)
     (DIST / out_name).write_text(html)
     print("built", DIST / out_name, "theme", theme)
 
