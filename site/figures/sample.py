@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT / 'pipeline'))
 from epw_stocks import industry5, _backfill_by_growth
 INPUTS = ROOT / 'data/inputs'
 WORK = ROOT / 'data/figures_work'
-PANEL = ROOT / 'data/output/panel_20260924.csv'
+# The stocks panel is always named explicitly (data/output/panel_<tag>.csv); no default vintage.
 KEY = ['gvkey', 'fyear']
 
 
@@ -161,7 +161,7 @@ def stock_fields(panel):
     return p[KEY+['G2','S2','G2depr','S2depr','gamma','intan2','ati2','intensity2','stock_sample']]
 
 
-def build_sample(inputs=INPUTS, panel=PANEL, final_deals=WORK/'author_deals.csv'):
+def build_sample(panel, inputs=INPUTS, final_deals=WORK/'author_deals.csv'):
     inputs, panel = Path(inputs),Path(panel)
     d = pd.read_csv(inputs/'funda.csv',parse_dates=['datadate'])
     d = d.sort_values(KEY+['datadate']).drop_duplicates(KEY,keep='last')
@@ -215,11 +215,11 @@ def market_view(sample):
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--inputs',type=Path,default=INPUTS)
-    ap.add_argument('--panel',type=Path,default=PANEL)
+    ap.add_argument('--panel',type=Path,required=True,help='stocks panel, e.g. data/output/panel_<tag>.csv')
     ap.add_argument('--final-deals',type=Path,default=WORK/'author_deals.csv')
     ap.add_argument('--out',type=Path,default=WORK/'sample.csv')
     a=ap.parse_args()
-    d=build_sample(a.inputs,a.panel,a.final_deals)
+    d=build_sample(a.panel,a.inputs,a.final_deals)
     a.out.parent.mkdir(parents=True,exist_ok=True)
     d.to_csv(a.out,index=False)
     summary={'rows':len(d),'first_year':int(d.fyear.min()),'latest_year':int(d.fyear.max()),'market_rows':int(d.market_sample.sum()),'stock_rows':int(d.stock_sample.sum()),'target_rows':int(d.targetYear.sum()),'acquirer_rows':int(d.acqYear.sum()),'sp500_last_year':int(d.loc[d.sp500.eq(1),'fyear'].max())}

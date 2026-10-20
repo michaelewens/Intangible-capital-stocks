@@ -6,16 +6,16 @@ Shared panel: 600,028 firm-years; latest fiscal year 2026. Results below were co
 |---|---|---|---:|---:|---:|
 | 01 | rdAssets | 1977–2023 | 0.999994 | 0.000268 | 0/47 |
 | 01 | capxAssets | 1977–2023 | 0.999975 | 0.000187 | 0/47 |
-| 07 | intensity2 industry=1 | 1977–2024 | 0.998923 | 0.001086 | 0/48 |
-| 07 | intensity2 industry=2 | 1977–2024 | 0.995360 | 0.001491 | 1/48 |
-| 07 | intensity2 industry=3 | 1977–2024 | 0.997830 | 0.001677 | 1/48 |
-| 07 | intensity2 industry=4 | 1977–2024 | 0.994216 | 0.002062 | 1/48 |
-| 07 | intensity2 industry=6 | 1977–2024 | 0.999937 | 0.000653 | 0/48 |
+| 07 | intensity2 industry=1 | 1977–2024 | 0.998893 | 0.001080 | 0/48 |
+| 07 | intensity2 industry=2 | 1977–2024 | 0.995738 | 0.001459 | 1/48 |
+| 07 | intensity2 industry=3 | 1977–2024 | 0.997811 | 0.001681 | 1/48 |
+| 07 | intensity2 industry=4 | 1977–2024 | 0.994194 | 0.002071 | 1/48 |
+| 07 | intensity2 industry=6 | 1977–2024 | 0.999934 | 0.000625 | 0/48 |
 | 08 | mb_win | 1977–2017 | 0.998415 | 0.031803 | 6/41 |
-| 08 | epw | 1977–2017 | 0.996022 | 0.018826 | 3/41 |
-| 09 | roe_inc2 | 1978–2023 | 0.866063 | 0.013304 | 18/46 |
-| 09 | roe_inc_epw2 | 1978–2023 | 0.964374 | 0.004170 | 7/46 |
-| 09 | diffUnadj | 1978–2023 | 0.829687 | 0.011973 | 29/46 |
+| 08 | epw | 1977–2017 | 0.995994 | 0.018973 | 3/41 |
+| 09 | roe_inc2 | 1978–2023 | 0.867114 | 0.013458 | 18/46 |
+| 09 | roe_inc_epw2 | 1978–2023 | 0.964450 | 0.004172 | 8/46 |
+| 09 | diffUnadj | 1978–2023 | 0.830505 | 0.012117 | 29/46 |
 
 ## Matched historical input audit
 
@@ -67,7 +67,7 @@ The final deal keys were found in the authors’ local estimation file and stage
   "first_year": 1950,
   "latest_year": 2026,
   "market_rows": 358714,
-  "stock_rows": 359683,
+  "stock_rows": 360118,
   "target_rows": 51,
   "acquirer_rows": 1391,
   "sp500_last_year": 2026
@@ -109,9 +109,9 @@ Current reconstructed CCM map versus the authors’ dated map (different input v
 
 Numerical regression checks passed for calendar gaps, pooled clipping, depreciation across gaps, intensity timing, missing numerator handling and membership-screen timing. Re-run with `python3 site/figures/check_ports.py`.
 - Figure 1: exported 1977–2026; last nonmissing plotted year 2026.
-- Figure 7: exported 1977–2025; last nonmissing plotted year 2025.
+- Figure 7: exported 1977–2026; last nonmissing plotted year 2026.
 - Figure 8: exported 1977–2026; last nonmissing plotted year 2026.
-- Figure 9: exported 1977–2025; last nonmissing plotted year 2025.
+- Figure 9: exported 1977–2026; last nonmissing plotted year 2026.
 
 ## Visual review
 
@@ -123,7 +123,7 @@ Plotted aggregates: `site/data/figNN.csv`; plots: `site/figures/out/figNN.svg`. 
 
 ```sh
 python3 site/figures/prepare_author_inputs.py
-python3 site/figures/sample.py
+python3 site/figures/sample.py --panel data/output/panel_<tag>.csv
 python3 site/figures/fig01_rd_capex.py
 python3 site/figures/fig07_intensity.py
 python3 site/figures/fig08_mb.py

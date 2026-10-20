@@ -138,7 +138,7 @@ def main():
     notes = update_text_files(tag, facts, cmp, prev)
 
     if not a.skip_figures:
-        step("figures"); run([PY, "site/figures/sample.py"])
+        step("figures"); run([PY, "site/figures/sample.py", "--panel", f"data/output/panel_{tag}.csv"])
         for f in FIGS: run([PY, f"{f}.py"], cwd=ROOT / "site" / "figures")
         run([PY, "site/figures/validate_figures.py"])
     step("site build"); run([PY, "site/build.py"])
