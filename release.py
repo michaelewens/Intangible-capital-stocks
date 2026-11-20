@@ -47,9 +47,9 @@ def preflight(allow_stale):
         sys.exit("FRED_API_KEY is not set (eval \"$(grep -E '^export FRED_API_KEY=' ~/.zshrc)\")")
     import duckdb
     con = duckdb.connect(str(SNAPSHOT), read_only=True)
-    pulled = con.sql("select max(pulled_at) from _meta").fetchone()[0]
-    asof = con.sql("select max(datadate) from funda").fetchone()[0]
-    crsp_asof = con.sql("select max(mthcaldt) from msf").fetchone()[0]
+    pulled = con.execute("select max(pulled_at) from _meta").fetchone()[0]
+    asof = con.execute("select max(datadate) from funda").fetchone()[0]
+    crsp_asof = con.execute("select max(mthcaldt) from msf").fetchone()[0]
     con.close()
     age = (datetime.now(pulled.tzinfo) - pulled).days
     print(f"  snapshot pulled {pulled.date()} ({age} days ago), funda datadate through {asof}, CRSP monthly through {crsp_asof}")
